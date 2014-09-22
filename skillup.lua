@@ -20,15 +20,15 @@ require 'actions'
 texts = require('texts')
 box = {}
 box.pos = {}
-box.pos.x = 193
-box.pos.y = 215
+box.pos.x = 211
+box.pos.y = 402
 box.text = {}
 box.text.font = 'Dotum'
 box.text.size = 12
 box.bg = {}
 box.bg.alpha = 255
-if gearswap.pathsearch({'Data/skillup_data.lua'}) then
-	include('Data/skillup_data.lua')
+if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
+	include('Saves/skillup_data.lua')
 end
 window = texts.new(box)
 function get_sets()
@@ -159,7 +159,7 @@ function initialize(text, settings)
     text:append(properties:concat('\n'))
 end
 function file_unload()
-	file_write()
+	--file_write()
     window:destroy()
 end
 function status_change(new,old)
@@ -367,6 +367,24 @@ function precast(spell)
 end
 function aftercast(spell)
 	if skilluprun then
+		if spell.interrupted then
+			if spell.type == "Geomancy" then
+				send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
+			elseif spell.skill == "Healing Magic" then
+				send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
+			elseif spell.skill == "Enhancing Magic" then
+				send_command('wait 3.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
+			elseif spell.skill == "Ninjutsu" then
+				send_command('wait 3.0;input /ma "'..ninspells[nincount]..'" <me>')
+			elseif spell.skill == "Singing" then
+				send_command('wait 3.0;input /ma "'..songspells[songcount]..'" <me>')
+			elseif spell.skill == "Blue Magic" then
+				send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
+			elseif spell.type == "SummonerPact" then
+				send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+			end
+			return
+		end
 		if spell.type == "Geomancy" then
 			if geomancycap and handbellcap then
 				skilluprun = false
@@ -630,7 +648,7 @@ function updatedisplay()
 	end
 end
 function file_write()
-	local file = io.open(lua_base_path..'data/'..player.name..'/Data/skillup_data.lua',"w")
+	local file = io.open(lua_base_path..'data/'..player.name..'/Saves/skillup_data.lua',"w")
 	file:write(
 		'box.pos.x = '..tostring(box.pos.x)..
 		'\nbox.pos.y = '..tostring(box.pos.y)..
