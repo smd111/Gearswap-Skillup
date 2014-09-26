@@ -16,6 +16,8 @@
 	to just stop and stay logged on after skillup use command "gs c afterStop"(only needed if you use one of the above auto shutdown/logoff)
 	
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
+-- Debug mode (default: false)
+debugmode = false
 require 'actions'
 texts = require('texts')
 box = {}
@@ -46,7 +48,7 @@ function get_sets()
 	geocount = 1
 	healingspells = {"Blindna","Cura","Cura II","Cura III","Curaga","Curaga II","Curaga III","Curaga IV","Curaga V","Cure","Cure II","Cure III","Cure IV","Cure V","Cure VI","Cursna","Esuna","Paralyna","Poisona","Reraise","Reraise II","Reraise III","Silena","Stona","Viruna"}
 	healingcount = 1
-	enhancespells = {"Adloquium","Animus Augeo","Animus Minuo","Aquaveil","Aurorastorm","Auspice","Baraera","Baraero","Baramnesia","Baramnesra","Barblind","Barblindra","Barblizzara","Barblizzard","Barfira","Barfire","Barparalyze","Barparalyzra","Barpetra","Barpetrify","Barpoison","Barpoisonra","Barsilence","Barsilencera","Barsleep","Barsleepra","Barstone","Barstonra","Barthunder","Barthundra","Barvira","Barvirus","Barwater","Barwatera","Blaze Spikes","Blink","Boost-AGI","Boost-CHR","Boost-DEX","Boost-INT","Boost-MND","Boost-STR","Boost-VIT","Crusade","Deodorize","Embrava","Enaero","Enaero II","Enblizzard","Enblizzard II","Enfire","Enfire II","Enstone","Enstone II","Enthunder","Enthunder II","Enwater","Enwater II","Erase","Escape","Firestorm","Foil","Gain-AGI","Gain-CHR","Gain-DEX","Gain-INT","Gain-MND","Gain-STR","Gain-VIT","Hailstorm","Haste","Ice Spikes","Invisible","Phalanx","Phalanx II","Protect","Protect II","Protect III","Protect IV","Protect V","Protectra","Protectra II","Protectra III","Protectra IV","Protectra V","Rainstorm","Refresh","Refresh II","Regen","Regen II","Regen III","Regen IV","Regen V","Reprisal","Sandstorm","Shell","Shell II","Shell III","Shell IV","Shell V","Shellra","Shellra II","Shellra III","Shellra IV","Shellra V","Shock Spikes","Sneak","Stoneskin","Temper","Thunderstorm","Voidstorm","Windstorm"}
+	enhancespells = {"Baraera","Baraero","Barblizzara","Barblizzard","Barfira","Barfire","Barstone","Barstonra","Barthunder","Barthundra","Barwater","Barwatera"}
 	enhancecount = 1
 	ninspells = {"Gekka: Ichi","Kakka: Ichi","Migawari: Ichi","Monomi: Ichi","Myoshu: Ichi","Tonko: Ichi","Tonko: Ni","Utsusemi: Ichi","Utsusemi: Ni","Yain: Ichi","Yain: Ichi","Gekka: Ichi"}
 	nincount = 1
@@ -138,6 +140,9 @@ function get_sets()
 	--add_to_chat(123,"Skill Up Loaded")
 end
 function initialize(text, settings)
+	if debugmode then
+		add_to_chat(7,"1")
+	end
     local properties = L{}
 	properties:append('--Skill Up--')
 	properties:append('Mode :\n   ${mode|None}')
@@ -163,6 +168,9 @@ function file_unload()
     window:destroy()
 end
 function status_change(new,old)
+	if debugmode then
+		add_to_chat(7,"2")
+	end
 	if new=='Idle' then
 		equip(sets.Idle)
 		if skilluptype[skillupcount] == "Geomancy" and skilluprun then
@@ -183,6 +191,9 @@ function status_change(new,old)
 	end
 end
 function filtered_action(spell)
+	if debugmode then
+		add_to_chat(7,"3")
+	end
 	if spell.type == "Geomancy" and skilluprun then
 		cancel_spell()
 		geocount = (geocount % #geospells) + 1
@@ -236,6 +247,9 @@ function filtered_action(spell)
 	end
 end
 function precast(spell)
+	if debugmode then
+		add_to_chat(7,"4")
+	end
 	if spell then
 		if spell.mp_cost > player.mp then
 			cancel_spell()
@@ -366,6 +380,9 @@ function precast(spell)
 	end
 end
 function aftercast(spell)
+	if debugmode then
+		add_to_chat(7,"5")
+	end
 	if skilluprun then
 		if spell.interrupted then
 			if spell.type == "Geomancy" then
@@ -386,49 +403,49 @@ function aftercast(spell)
 			return
 		end
 		if spell.type == "Geomancy" then
-			if geomancycap and handbellcap then
+			if geomancy == "Capped" and handbell == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
 		elseif spell.skill == "Healing Magic" then
-			if healingcap then
+			if healing == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
 		elseif spell.skill == "Enhancing Magic" then
-			if enhancingcap then
+			if enhancing == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
 		elseif spell.skill == "Ninjutsu" then
-			if ninjutsucap then
+			if ninjutsu == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..ninspells[nincount]..'" <me>')
 		elseif spell.skill == "Singing" then
-			if singingcap and stringcap and windcap then
+			if singing == "Capped" and strings == "Capped" and wind == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..songspells[songcount]..'" <me>')
 		elseif spell.skill == "Blue Magic" then
-			if bluecap then
+			if blue == "Capped" then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
 		elseif spell.type == "SummonerPact" then
-			if summoningcap then
+			if summoning == "Capped" then
 				skilluprun = false
 				send_command('wait 4.0;input /ja "Release" <me>')
 				return
@@ -452,7 +469,7 @@ function aftercast(spell)
 			send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 		end
 	elseif spell.type == "SummonerPact" then
-		if summoningcap then
+		if summoning == "Capped" then
 			skilluprun = false
 			send_command('wait 4.0;input /ja "Release" <me>')
 			return
@@ -463,7 +480,7 @@ function aftercast(spell)
 			send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
 		end
 	elseif spell.name == "Release" then
-		if summoningcap then
+		if summoning == "Capped" then
 			shutdown_logoff()
 			return
 		end
@@ -478,6 +495,9 @@ function aftercast(spell)
 	end
 end
 function self_command(command)
+	if debugmode then
+		add_to_chat(7,"6")
+	end
 	if command == "startgeo" then
 		skilluprun = true
 		skillupcount = 2
@@ -546,6 +566,9 @@ function self_command(command)
 	updatedisplay()
 end
 function shutdown_logoff()
+	if debugmode then
+		add_to_chat(7,"7")
+	end
 		add_to_chat(123,"Auto stop skillup")
 	if logoff then
 		send_command('wait 3.0;input /logoff')
@@ -554,6 +577,9 @@ function shutdown_logoff()
 	end
 end
 function nin_tool_check()
+	if debugmode then
+		add_to_chat(7,"8")
+	end
 	if (player.inventory[nin_tools[spell.english].tool] == nil  or player.inventory[nin_tools[spell.english].uni_tool] == nil) 
 	and (player.inventory[nin_tools[spell.english].tool_bag] ~= nil or player.inventory[nin_tools[spell.english].uni_tool_bag] ~= nil) then
 		return true
@@ -562,6 +588,9 @@ function nin_tool_check()
 	end
 end
 function nin_tool_open()
+	if debugmode then
+		add_to_chat(7,"9")
+	end
 	if nincantcount ~= #ninspells and not nincant:contains(spell.english) then
 		if player.inventory[nin_tools[spell.english].tool_bag] ~= nil then
 			tbid = nin_tools[spell.english].tool_bag_id
@@ -584,6 +613,9 @@ function nin_tool_open()
 	end
 end
 function event_action(act)
+	if debugmode then
+		add_to_chat(7,"10")
+	end
 	action = Action(act)
     if action:get_category_string() == 'item_finish' then
         if action.raw.param == tbid and player.id == action.raw.actor_id then
@@ -594,27 +626,20 @@ function event_action(act)
 end
 windower.raw_register_event('action', event_action)
 function skill_capped(id, data, modified, injected, blocked)
+	if debugmode then
+		add_to_chat(7,"11")
+	end
 	if id == 0x062 then
-		healingcap = data:unpack('q', 0xC4, 8)
-		healing = data:unpack('H', 0xC3)
-		enhancingcap = data:unpack('q', 0xC6, 8)
-		enhancing = data:unpack('H', 0xC5)
-		summoningcap = data:unpack('q', 0xCE, 8)
-		summoning = data:unpack('H', 0xCD)
-		ninjutsucap = data:unpack('q', 0xD0, 8)
-		ninjutsu = data:unpack('H', 0xCf)
-		singingcap = data:unpack('q', 0xD2, 8)
-		singing = data:unpack('H', 0xD1)
-		stringcap = data:unpack('q', 0xD4, 8)
-		strings = data:unpack('H', 0xD3)
-		windcap = data:unpack('q', 0xD6, 8)
-		wind = data:unpack('H', 0xD5)
-		bluecap = data:unpack('q', 0xD8, 8)
-		blue = data:unpack('H', 0xD7)
-		geomancycap = data:unpack('q', 0xDA, 8)
-		geomancy = data:unpack('H', 0xD9)
-		handbellcap = data:unpack('q', 0xDC, 8)
-		handbell = data:unpack('H', 0xDB)
+		healing = data:unpack('H', 0xC3)>32768 and "Capped" or data:unpack('H', 0xC3)
+		enhancing = data:unpack('H', 0xC5)>32768 and "Capped" or data:unpack('H', 0xC5)
+		summoning = data:unpack('H', 0xCD)>32768 and "Capped" or data:unpack('H', 0xCD)
+		ninjutsu = data:unpack('H', 0xCF)>32768 and "Capped" or data:unpack('H', 0xCF)
+		singing = data:unpack('H', 0xD1)>32768 and "Capped" or data:unpack('H', 0xD1)
+		strings = data:unpack('H', 0xD3)>32768 and "Capped" or data:unpack('H', 0xD3)
+		wind = data:unpack('H', 0xD5)>32768 and "Capped" or data:unpack('H', 0xD5)
+		blue = data:unpack('H', 0xD7)>32768 and "Capped" or data:unpack('H', 0xD7)
+		geomancy = data:unpack('H', 0xD9)>32768 and "Capped" or data:unpack('H', 0xD9)
+		handbell = data:unpack('H', 0xDB)>32768 and "Capped" or data:unpack('H', 0xDB)
 		updatedisplay()
 	end
 	if id == 0x0DF and skilluprun then
@@ -625,22 +650,25 @@ function skill_capped(id, data, modified, injected, blocked)
 end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
+	if debugmode then
+		add_to_chat(7,"12")
+	end
 	if skilluprun then
 		info = {}
 		info.mode = skilluptype[skillupcount]
 		info.modeb = skilluprun and info.mode or 'None'
-		info.start = skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)Stoped'
-		info.skillssing = singingcap and '\\cs(255,0,0)Capped' or singing
-		info.skillstring = stringcap and '\\cs(255,0,0)Capped' or strings
-		info.skillwind = windcap and '\\cs(255,0,0)Capped' or wind
-		info.skillgeo = geomancycap and '\\cs(255,0,0)Capped' or geomancy
-		info.skillbell = handbellcap and '\\cs(255,0,0)Capped' or handbell
+		info.start = skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)stopped'
+		info.skillssing = singing
+		info.skillstring = strings
+		info.skillwind = wind
+		info.skillgeo = geomancy
+		info.skillbell = handbell
 		info.skill = {}
-		info.skill.Healing = healingcap and '\\cs(255,0,0)Capped' or healing
-		info.skill.Enhancing = enhancingcap and '\\cs(255,0,0)Capped' or enhancing
-		info.skill.Summoning = summoningcap and '\\cs(255,0,0)Capped' or summoning
-		info.skill.Ninjutsu = ninjutsucap and '\\cs(255,0,0)Capped' or ninjutsu
-		info.skill.Blue = bluecap and '\\cs(255,0,0)Capped' or blue
+		info.skill.Healing = healing
+		info.skill.Enhancing = enhancing
+		info.skill.summoning = summoning
+		info.skill.Ninjutsu = ninjutsu
+		info.skill.Blue = blue
 		info.skillbulk = info.skill[info.mode]
 		info.type = stoptype
 		window:update(info)
@@ -648,6 +676,9 @@ function updatedisplay()
 	end
 end
 function file_write()
+	if debugmode then
+		add_to_chat(7,"13")
+	end
 	local file = io.open(lua_base_path..'data/'..player.name..'/Saves/skillup_data.lua',"w")
 	file:write(
 		'box.pos.x = '..tostring(box.pos.x)..
