@@ -15,6 +15,7 @@
 	to auto logoff after skillup use command "gs c afterlogoff"
 	to just stop and stay logged on after skillup use command "gs c afterStop"(only needed if you use one of the above auto shutdown/logoff)
 	
+	
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
 -- Debug mode (default: false)
 debugmode = false
