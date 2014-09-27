@@ -20,6 +20,7 @@
 debugmode = false
 require 'actions'
 texts = require('texts')
+packets = require('packets')
 box = {}
 box.pos = {}
 box.pos.x = 211
@@ -114,26 +115,6 @@ function get_sets()
 	}
 	shutdown = false
 	logoff = false
-	healingcap = false 
-	enhancingcap = false
-	summoningcap = false
-	ninjutsucap = false
-	singingcap = false
-	stringcap = false
-	windcap = false
-	bluecap = false
-	geomancycap = false
-	handbellcap = false
-	healing = 0
-	enhancing = 0
-	summoning = 0
-	ninjutsu = 0
-	singing = 0
-	strings = 0
-	wind = 0
-	blue = 0
-	geomancy = 0
-	handbell = 0
 	stoptype = "Stop"
 	initialize(window, box)
 	window:show()
@@ -380,6 +361,7 @@ function precast(spell)
 	end
 end
 function aftercast(spell)
+	add_to_chat(7,"gtest="..tostring(gtest))
 	if debugmode then
 		add_to_chat(7,"5")
 	end
@@ -626,17 +608,18 @@ function event_action(act)
 end
 windower.raw_register_event('action', event_action)
 function skill_capped(id, data, modified, injected, blocked)
+	local packet = packets.parse('incoming', data)
 	if id == 0x062 then
-		healing = (data:unpack('B', 0xC4, 8) and "Capped" or data:unpack('H', 0xC3))
-		enhancing = (data:unpack('B', 0xC6, 8) and "Capped" or data:unpack('H', 0xC5))
-		summoning = (data:unpack('B', 0xCE, 8) and "Capped" or data:unpack('H', 0xCD))
-		ninjutsu = (data:unpack('B', 0xD0, 8) and "Capped" or data:unpack('H', 0xCF))
-		singing = (data:unpack('B', 0xD2, 8) and "Capped" or data:unpack('H', 0xD1))
-		strings = (data:unpack('B', 0xD4, 8) and "Capped" or data:unpack('H', 0xD3))
-		wind = (data:unpack('B', 0xD6, 8) and "Capped" or data:unpack('H', 0xD5))
-		blue = (data:unpack('B', 0xD8, 8) and "Capped" or data:unpack('H', 0xD7))
-		geomancy = (data:unpack('B', 0xDA, 8) and "Capped" or data:unpack('H', 0xD9))
-		handbell = (data:unpack('B', 0xDC, 8) and "Capped" or data:unpack('H', 0xDB))
+		healing = (packet['Healing Magic Capped'] and "Capped" or packet['Healing Magic Level'])
+		enhancing = (packet['Enhancing Magic Capped'] and "Capped" or packet['Enhancing Magic Level'])
+		summoning = (packet['Summoning Magic Capped'] and "Capped" or packet['Summoning Magic Level'])
+		ninjutsu = (packet['Ninjutsu Capped'] and "Capped" or packet['Ninjutsu Level'])
+		singing = (packet['Singing Capped'] and "Capped" or packet['Singing Level'])
+		strings = (packet['Stringed Instrument Capped'] and "Capped" or packet['Stringed Instrument Level'])
+		wind = (packet['Wind Instrument Capped'] and "Capped" or packet['Wind Instrument Level'])
+		blue = (packet['Blue Magic Capped'] and "Capped" or packet['Blue Magic Level'])
+		geomancy = (packet['Geomancy Capped'] and "Capped" or packet['Geomancy Level'])
+		handbell = (packet['Handbell Capped'] and "Capped" or packet['Handbell Level'])
 		updatedisplay()
 	end
 	if id == 0x0DF and skilluprun then
@@ -644,6 +627,9 @@ function skill_capped(id, data, modified, injected, blocked)
 			windower.send_command('input /heal off')
 		end
 	end
+end
+function PrintSomething(_index)
+	print( _index, packet[_index] ) 
 end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
