@@ -626,9 +626,6 @@ function event_action(act)
 end
 windower.raw_register_event('action', event_action)
 function skill_capped(id, data, modified, injected, blocked)
-	if debugmode then
-		add_to_chat(7,"11")
-	end
 	if id == 0x062 then
 		healing = (data:unpack('B', 0xC4, 8) and "Capped" or data:unpack('H', 0xC3))
 		enhancing = (data:unpack('B', 0xC6, 8) and "Capped" or data:unpack('H', 0xC5))
