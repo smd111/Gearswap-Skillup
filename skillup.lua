@@ -15,7 +15,6 @@
 	to auto logoff after skillup use command "gs c afterlogoff"
 	to just stop and stay logged on after skillup use command "gs c afterStop"(only needed if you use one of the above auto shutdown/logoff)
 	
-	
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
 -- Debug mode (default: false)
 debugmode = false
@@ -627,9 +626,6 @@ function skill_capped(id, data, modified, injected, blocked)
 			windower.send_command('input /heal off')
 		end
 	end
-end
-function PrintSomething(_index)
-	print( _index, packet[_index] ) 
 end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
