@@ -484,24 +484,28 @@ function self_command(command)
 		skillupcount = 2
 		send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
 		--add_to_chat(123,"Starting Geomancy Skill up")
+		initialize(window, box)
 	end
 	if command == "starthealing" then
 		skilluprun = true
 		skillupcount = 1
 		send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
 		--add_to_chat(123,"Starting Healing Skill up")
+		initialize(window, box)
 	end
 	if command == "startenhancing" then
 		skilluprun = true
 		skillupcount = 3
 		send_command('wait 1.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
 		--add_to_chat(123,"Starting Enhancing Skill up")
+		initialize(window, box)
 	end
 	if command == "startninjutsu" then
 		skilluprun = true
 		skillupcount = 4
 		send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
 		--add_to_chat(123,"Starting Ninjutsu Skill up")
+		initialize(window, box)
 	end
 	if command == "startsinging" then
 		skilluprun = true
@@ -514,12 +518,14 @@ function self_command(command)
 		skillupcount = 6
 		send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 		--add_to_chat(123,"Starting Blue Magic Skill up")
+		initialize(window, box)
 	end
 	if command == "startsmn" then
 		skilluprun = true
 		skillupcount = 7
 		send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 		--add_to_chat(123,"Starting Summoning Skill up")
+		initialize(window, box)
 	end
 	if command == "skillstop" then
 		skilluprun = false
@@ -530,20 +536,22 @@ function self_command(command)
 		shutdown = true
 		logoff = false
 		--add_to_chat(123, '----- Will Shutdown When Skillup Done -----')
+		initialize(window, box)
 	end
 	if command == 'afterlogoff' then
 		stoptype = "Logoff"
 		shutdown = false
 		logoff = true
 		--add_to_chat(123, '----- Will Logoff When Skillup Done -----')
+		initialize(window, box)
 	end
 	if command == 'afterStop' then
 		stoptype = "Stop"
 		shutdown = false
 		logoff = false
 		--add_to_chat(123, '----- Will Stop When Skillup Done -----')
+		initialize(window, box)
 	end
-	initialize(window, box)
 	updatedisplay()
 end
 function shutdown_logoff()
