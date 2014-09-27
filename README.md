@@ -1,5 +1,8 @@
 Gearswap-Skillup
 ================
+
+THIS TOOL IS ONLY DESINED TO SKILLUP THOES MAGIC SKILLS THAT CAN BE SKILLED OUTSIDE OF BATTLE IF YOU WANT TO USE IT FOR OTHER MAGIC SKILLS !!YOUR ON YOUR OWN TO FIND ANY ISSUES!!
+
 	--this tool is set it and forget it you can leave it running for hours as long as se does not log you out it will keep running--
 	1.)place "skillup.lua" in your normal gearswap folder(where all your job files are)
 	2.)then us "gs l skillup.lua" to load this skill up in to gearswap
