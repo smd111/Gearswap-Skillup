@@ -361,7 +361,6 @@ function precast(spell)
 	end
 end
 function aftercast(spell)
-	add_to_chat(7,"gtest="..tostring(gtest))
 	if debugmode then
 		add_to_chat(7,"5")
 	end
