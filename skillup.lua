@@ -641,7 +641,7 @@ function updatedisplay()
 		add_to_chat(7,"12")
 	end
 	if skilluprun then
-		info = {}
+		local info = {}
 		info.mode = skilluptype[skillupcount]
 		info.modeb = skilluprun and info.mode or 'None'
 		info.start = skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)stopped'
