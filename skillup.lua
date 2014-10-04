@@ -19,7 +19,7 @@
 -- Debug mode (default: false)
 debugmode = false
 require 'actions'
-texts = require('texts')
+texts = require('includes/gstexts')
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -30,10 +30,20 @@ box.text.font = 'Dotum'
 box.text.size = 12
 box.bg = {}
 box.bg.alpha = 255
+boxa = {}
+boxa.pos = {}
+boxa.pos.x = box.pos.x - 139
+boxa.pos.y = box.pos.y
+boxa.text = {}
+boxa.text.font = 'Dotum'
+boxa.text.size = 9
+boxa.bg = {}
+boxa.bg.alpha = 255
 if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
 	include('Saves/skillup_data.lua')
 end
 window = texts.new(box)
+test = texts.new(boxa)
 function get_sets()
 	skilluprun = false
 	sets.brd = {}
@@ -116,37 +126,60 @@ function get_sets()
 	shutdown = false
 	logoff = false
 	stoptype = "Stop"
-	initialize(window, box)
+	initialize(window, box, 'window')
+	initialize(test, boxa, 'test')
 	window:show()
+	test:show()
 	--add_to_chat(123,"Skill Up Loaded")
 end
-function initialize(text, settings)
+function initialize(text, settings, a)
 	if debugmode then
 		add_to_chat(7,"1")
 	end
-    local properties = L{}
-	properties:append('--Skill Up--')
-	properties:append('Mode :\n   ${mode|None}')
-	if skilluptype[skillupcount] == 'Singing' then
-		properties:append('\\cs(255,255,255)Current Singing Skill LVL:\n   ${skillssing|0}')
-		properties:append('\\cs(255,255,255)Current String Skill LVL:\n   ${skillstring|0}')
-		properties:append('\\cs(255,255,255)Current Wind Skill LVL:\n   ${skillwind|0}')
-	elseif skilluptype[skillupcount] == 'Geomancy' then
-		properties:append('\\cs(255,255,255)Current Geomancy Skill LVL:\n   ${skillgeo|0}')
-		properties:append('\\cs(255,255,255)Current Handbell Skill LVL:\n   ${skillbell|0}')
-	else
-		properties:append('\\cs(255,255,255)Current Skilling LVL:\n   ${skillbulk|0}')
+	if a == 'window' then
+		local properties = L{}
+		properties:append('--Skill Up--')
+		properties:append('Mode :\n   ${mode|None}')
+		if skilluptype[skillupcount] == 'Singing' then
+			properties:append('\\cs(255,255,255)Current Singing Skill LVL:\n   ${skillssing|0}')
+			properties:append('\\cs(255,255,255)Current String Skill LVL:\n   ${skillstring|0}')
+			properties:append('\\cs(255,255,255)Current Wind Skill LVL:\n   ${skillwind|0}')
+		elseif skilluptype[skillupcount] == 'Geomancy' then
+			properties:append('\\cs(255,255,255)Current Geomancy Skill LVL:\n   ${skillgeo|0}')
+			properties:append('\\cs(255,255,255)Current Handbell Skill LVL:\n   ${skillbell|0}')
+		else
+			properties:append('\\cs(255,255,255)Current Skilling LVL:\n   ${skillbulk|0}')
+		end
+		if shutdown then
+			properties:append('\\cs(255,255,255)Will Shutdown When Skillup Done')
+		end
+		if logoff then
+			properties:append('\\cs(255,255,255)Will Logoff When Skillup Done')
+		end
+		properties:append('\\cs(255,255,255)Skillup ${start|\\cs(255,0,0)Stoped}')
+		text:clear()
+		text:append(properties:concat('\n'))
 	end
-	if shutdown then
-		properties:append('\\cs(255,255,255)Will ${type|Stop} When Skillup Done')
+	if a == 'test' then
+		local properties = L{}
+		properties:append('Start GEO')
+		properties:append('Start Healing')
+		properties:append('Start Enhancing')
+		properties:append('Start Ninjutsu')
+		properties:append('Start Singing')
+		properties:append('Start Blue Magic')
+		properties:append('Start Summoning Magic')
+		properties:append('Stop Skillups')
+		properties:append('Shutdown After Skillup')
+		properties:append('Logoff After Skillup')
+		text:clear()
+		text:append(properties:concat('\n'))
 	end
-	properties:append('\\cs(255,255,255)Skillup ${start|\\cs(255,0,0)Stoped}')
-    text:clear()
-    text:append(properties:concat('\n'))
 end
 function file_unload()
 	--file_write()
     window:destroy()
+    test:destroy()
 end
 function status_change(new,old)
 	if debugmode then
@@ -484,28 +517,28 @@ function self_command(command)
 		skillupcount = 2
 		send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
 		--add_to_chat(123,"Starting Geomancy Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "starthealing" then
 		skilluprun = true
 		skillupcount = 1
 		send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
 		--add_to_chat(123,"Starting Healing Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "startenhancing" then
 		skilluprun = true
 		skillupcount = 3
 		send_command('wait 1.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
 		--add_to_chat(123,"Starting Enhancing Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "startninjutsu" then
 		skilluprun = true
 		skillupcount = 4
 		send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
 		--add_to_chat(123,"Starting Ninjutsu Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "startsinging" then
 		skilluprun = true
@@ -518,39 +551,40 @@ function self_command(command)
 		skillupcount = 6
 		send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 		--add_to_chat(123,"Starting Blue Magic Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "startsmn" then
 		skilluprun = true
 		skillupcount = 7
 		send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 		--add_to_chat(123,"Starting Summoning Skill up")
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == "skillstop" then
 		skilluprun = false
 		--add_to_chat(123,"Stoping Skill up")
+		initialize(window, box, 'window')
 	end
 	if command == 'aftershutdown' then
 		stoptype = "Shutdown"
 		shutdown = true
 		logoff = false
 		--add_to_chat(123, '----- Will Shutdown When Skillup Done -----')
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == 'afterlogoff' then
 		stoptype = "Logoff"
 		shutdown = false
 		logoff = true
 		--add_to_chat(123, '----- Will Logoff When Skillup Done -----')
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	if command == 'afterStop' then
 		stoptype = "Stop"
 		shutdown = false
 		logoff = false
 		--add_to_chat(123, '----- Will Stop When Skillup Done -----')
-		initialize(window, box)
+		initialize(window, box, 'window')
 	end
 	updatedisplay()
 end
@@ -560,10 +594,11 @@ function shutdown_logoff()
 	end
 		add_to_chat(123,"Auto stop skillup")
 	if logoff then
-		send_command('wait 3.0;input /logoff')
+		send_command('wait 3.0;input /logout')
 	elseif shutdown then
 		send_command('wait 3.0;input /shutdown')
 	end
+	updatedisplay()
 end
 function nin_tool_check()
 	if debugmode then
@@ -673,3 +708,62 @@ function file_write()
 		'')
 	file:close() 
 end
+function mouse(type, x, y, delta, blocked)
+	if type == 0 then
+		if window:hover(x, y) and window:visible() then
+			test:pos((box.pos.x - 139), box.pos.y)
+		elseif test:hover(x, y) and test:visible() then
+			window:pos((boxa.pos.x + 139), boxa.pos.y)
+		else
+			return
+		end
+	elseif type == 2 then
+		local hx = (x - boxa.pos.x)
+		local hy = (y - boxa.pos.y)
+		local location = {}
+		location.GEOya = 1
+		location.GEOyb = 14
+		location.HELya = location.GEOyb
+		location.HELyb = location.GEOyb + 14
+		location.ENHya = location.HELyb
+		location.ENHyb = location.HELyb + 14
+		location.NINya = location.ENHyb
+		location.NINyb = location.ENHyb + 14
+		location.SINya = location.NINyb
+		location.SINyb = location.NINyb + 14
+		location.BLUya = location.SINyb
+		location.BLUyb = location.SINyb + 14
+		location.SMNya = location.BLUyb
+		location.SMNyb = location.BLUyb + 14
+		location.STOPya = location.SMNyb
+		location.STOPyb = location.SMNyb + 14
+		location.DOWNya = location.STOPyb
+		location.DOWNyb = location.STOPyb + 14
+		location.LOGya = location.DOWNyb
+		location.LOGyb = location.DOWNyb + 14
+		if test:hover(x, y) and test:visible() then
+			if (hy > location.GEOya and hy < location.GEOyb) then
+				send_command("gs c startgeo")
+			elseif (hy > location.HELya and hy < location.HELyb) then
+				send_command("gs c starthealing")
+			elseif (hy > location.ENHya and hy < location.ENHyb) then
+				send_command("gs c startenhancing")
+			elseif (hy > location.NINya and hy < location.NINyb) then
+				send_command("gs c startninjutsu")
+			elseif (hy > location.SINya and hy < location.SINyb) then
+				send_command("gs c startsinging")
+			elseif (hy > location.BLUya and hy < location.BLUyb) then
+				send_command("gs c startblue")
+			elseif (hy > location.SMNya and hy < location.SMNyb) then
+				send_command("gs c startsmn")
+			elseif (hy > location.STOPya and hy < location.STOPyb) then
+				send_command("gs c skillstop")
+			elseif (hy > location.DOWNya and hy < location.DOWNyb) then
+				send_command("gs c aftershutdown")
+			elseif (hy > location.LOGya and hy < location.LOGyb) then
+				send_command("gs c afterlogoff")
+			end
+		end
+	end
+end
+windower.raw_register_event('mouse', mouse)
