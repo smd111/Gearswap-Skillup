@@ -152,9 +152,10 @@ function initialize(text, settings, a)
 		end
 		if shutdown then
 			properties:append('\\cs(255,255,255)Will Shutdown When Skillup Done')
-		end
-		if logoff then
+		elseif logoff then
 			properties:append('\\cs(255,255,255)Will Logoff When Skillup Done')
+		else
+			properties:append('\\cs(255,255,255)Will Stop When Skillup Done')
 		end
 		properties:append('\\cs(255,255,255)Skillup ${start|\\cs(255,0,0)Stoped}')
 		text:clear()
@@ -203,6 +204,7 @@ function status_change(new,old)
 			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 		end
 	end
+	mf_status_change(new,old)
 end
 function filtered_action(spell)
 	if debugmode then
@@ -598,6 +600,7 @@ function shutdown_logoff()
 	elseif shutdown then
 		send_command('wait 3.0;input /shutdown')
 	end
+	initialize(window, box, 'window')
 	updatedisplay()
 end
 function nin_tool_check()
@@ -708,6 +711,12 @@ function file_write()
 		'')
 	file:close() 
 end
+function mf_status_change(new,old)
+	if new=='Engaged' then
+		add_to_chat(7,"THIS SKILL TOOL WAS NOT MEANT TO DO THIS PLEASE DON'T'")
+		send_command('lua unload gearswap')
+	end
+end
 function mouse(type, x, y, delta, blocked)
 	if type == 0 then
 		if window:hover(x, y) and window:visible() then
@@ -721,26 +730,27 @@ function mouse(type, x, y, delta, blocked)
 		local hx = (x - boxa.pos.x)
 		local hy = (y - boxa.pos.y)
 		local location = {}
+		location.offset = boxa.text.size * 1.566666666666667
 		location.GEOya = 1
-		location.GEOyb = 14
+		location.GEOyb = location.offset
 		location.HELya = location.GEOyb
-		location.HELyb = location.GEOyb + 14
+		location.HELyb = (location.GEOyb + location.offset)
 		location.ENHya = location.HELyb
-		location.ENHyb = location.HELyb + 14
+		location.ENHyb = (location.HELyb + location.offset)
 		location.NINya = location.ENHyb
-		location.NINyb = location.ENHyb + 14
+		location.NINyb = (location.ENHyb + location.offset)
 		location.SINya = location.NINyb
-		location.SINyb = location.NINyb + 14
+		location.SINyb = (location.NINyb + location.offset)
 		location.BLUya = location.SINyb
-		location.BLUyb = location.SINyb + 14
+		location.BLUyb = (location.SINyb + location.offset)
 		location.SMNya = location.BLUyb
-		location.SMNyb = location.BLUyb + 14
+		location.SMNyb = (location.BLUyb + location.offset)
 		location.STOPya = location.SMNyb
-		location.STOPyb = location.SMNyb + 14
+		location.STOPyb = (location.SMNyb + location.offset)
 		location.DOWNya = location.STOPyb
-		location.DOWNyb = location.STOPyb + 14
+		location.DOWNyb = (location.STOPyb + location.offset)
 		location.LOGya = location.DOWNyb
-		location.LOGyb = location.DOWNyb + 14
+		location.LOGyb = (location.DOWNyb + location.offset)
 		if test:hover(x, y) and test:visible() then
 			if (hy > location.GEOya and hy < location.GEOyb) then
 				send_command("gs c startgeo")
@@ -767,3 +777,21 @@ function mouse(type, x, y, delta, blocked)
 	end
 end
 windower.raw_register_event('mouse', mouse)
+function action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
+local skill ={
+    [33] = "Healing",
+    [34] = "Enhancing",
+    [38] = "Summoning",
+    [39] = "Ninjutsu",
+    [40] = "Singing",
+    [41] = "String",
+    [42] = "Wind",
+    [43] = "Blue",
+    [44] = "Geomancy",
+    [45] = "Handbell",
+	}
+	if message_id == 38 and target_id == player.id and skill[param_1] == "Shield" then
+		print('param_2 = '..param_2)
+	end
+end
+--windower.raw_register_event('action message', action_message)
