@@ -6,7 +6,7 @@ THIS TOOL IS ONLY DESIGNED TO SKILLUP THOES MAGIC SKILLS THAT CAN BE SKILLED OUT
 This tool now has a menu so you can select what you want to do
 
 to download click the "Download Zip" to the right
-then extract and copy skillup.lua and the includes folder to your gearswap/data/<playername> folder
+then extract and copy skillup.lua to your gearswap/data/<playername> folder
 
 you can still use the commands below
 
