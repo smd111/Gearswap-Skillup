@@ -652,11 +652,10 @@ function updatedisplay()
 	if debugmode then
 		add_to_chat(7,"12")
 	end
-	if skilluprun then
-		local info = {}
+	local info = {}
 		info.mode = skilluptype[skillupcount]
 		info.modeb = skilluprun and info.mode or 'None'
-		info.start = (skilluprun and '\\cs(0,255,0)Started' or 'stopped')
+		info.start = (skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)Stoped')
 		info.skillssing = (skill['Singing Capped'] and "Capped" or skill['Singing Level'])
 		info.skillstring = (skill['Stringed Instrument Capped'] and "Capped" or skill['Stringed Instrument Level'])
 		info.skillwind = (skill['Wind Instrument Capped'] and "Capped" or skill['Wind Instrument Level'])
@@ -674,7 +673,6 @@ function updatedisplay()
 		info.skill_total = (total_skill_ups or 0) / 10
 		window:update(info)
 		window:show()
-	end
 end
 function file_write()
 	if debugmode then
