@@ -237,7 +237,7 @@ function filtered_action(spell)
 			send_command('input /ma "'..ninspells[nincount]..'" <me>')
 			return
 		end
-		if nin_tool_check() then
+		if nin_tool_check(spell) then
 			cancel_spell()
 			send_command('input /item "'..nin_tool_open()..'" <me>')
 		end
@@ -315,9 +315,9 @@ function precast(spell)
 			nincount = (nincount % #ninspells) + 1
 		end
 	elseif spell.skill == "Singing" and skilluprun then
-		if not stringcap then
+		if not skill['Stringed Instrument Capped'] then
 			equip(sets.brd.string)
-		elseif not windcap then
+		elseif not skill['Wind Instrument Capped'] then
 			equip(sets.brd.wind)
 		end
 		if not windower.ffxi.get_spells()[spell.id] then
@@ -424,49 +424,49 @@ function aftercast(spell)
 			return
 		end
 		if spell.type == "Geomancy" then
-			if geomancy == "Capped" and handbell == "Capped" then
+			if skill['Geomancy Capped'] and skill['Handbell Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
 		elseif spell.skill == "Healing Magic" then
-			if healing == "Capped" then
+			if skill['Healing Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
 		elseif spell.skill == "Enhancing Magic" then
-			if enhancing == "Capped" then
+			if skill['Enhancing Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
 		elseif spell.skill == "Ninjutsu" then
-			if ninjutsu == "Capped" then
+			if skill['Ninjutsu Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..ninspells[nincount]..'" <me>')
 		elseif spell.skill == "Singing" then
-			if singing == "Capped" and strings == "Capped" and wind == "Capped" then
+			if skill['Singing Capped'] and skill['Stringed Instrument Capped'] and skill['Wind Instrument Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..songspells[songcount]..'" <me>')
 		elseif spell.skill == "Blue Magic" then
-			if blue == "Capped" then
+			if skill['Blue Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
 		elseif spell.type == "SummonerPact" then
-			if summoning == "Capped" then
+			if skill['Summoning Magic Capped'] then
 				skilluprun = false
 				send_command('wait 4.0;input /ja "Release" <me>')
 				return
@@ -490,7 +490,7 @@ function aftercast(spell)
 			send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 		end
 	elseif spell.type == "SummonerPact" then
-		if summoning == "Capped" then
+		if skill['Summoning Magic Capped'] then
 			skilluprun = false
 			send_command('wait 4.0;input /ja "Release" <me>')
 			return
@@ -501,7 +501,7 @@ function aftercast(spell)
 			send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
 		end
 	elseif spell.name == "Release" then
-		if summoning == "Capped" then
+		if skill['Summoning Magic Capped'] then
 			shutdown_logoff()
 			return
 		end
@@ -610,28 +610,28 @@ function shutdown_logoff()
 	initialize(window, box, 'window')
 	updatedisplay()
 end
-function nin_tool_check()
+function nin_tool_check(spell)
 	if debugmode then
 		add_to_chat(7,"8")
 	end
-	if (player.inventory[nin_tools[spell.english].tool] == nil  or player.inventory[nin_tools[spell.english].uni_tool] == nil) 
-	and (player.inventory[nin_tools[spell.english].tool_bag] ~= nil or player.inventory[nin_tools[spell.english].uni_tool_bag] ~= nil) then
+	if (player.inventory[nin_tools[spell.name].tool] == nil  or player.inventory[nin_tools[spell.name].uni_tool] == nil) 
+	and (player.inventory[nin_tools[spell.name].tool_bag] ~= nil or player.inventory[nin_tools[spell.name].uni_tool_bag] ~= nil) then
 		return true
 	else
-		add_to_chat(7,"No Tools Available To Cast "..spell.english)
+		add_to_chat(7,"No Tools Available To Cast "..spell.name)
 	end
 end
 function nin_tool_open()
 	if debugmode then
 		add_to_chat(7,"9")
 	end
-	if nincantcount ~= #ninspells and not nincant:contains(spell.english) then
-		if player.inventory[nin_tools[spell.english].tool_bag] ~= nil then
-			tbid = nin_tools[spell.english].tool_bag_id
-			return nin_tools[spell.english].tool_bag
-		elseif player.inventory[nin_tools[spell.english].uni_tool_bag] ~= nil then
-			tbid = nin_tools[spell.english].uni_tool_bag_id
-			return nin_tools[spell.english].uni_tool_bag
+	if nincantcount ~= #ninspells and not nincant:contains(spell.name) then
+		if player.inventory[nin_tools[spell.name].tool_bag] ~= nil then
+			tbid = nin_tools[spell.name].tool_bag_id
+			return nin_tools[spell.name].tool_bag
+		elseif player.inventory[nin_tools[spell.name].uni_tool_bag] ~= nil then
+			tbid = nin_tools[spell.name].uni_tool_bag_id
+			return nin_tools[spell.name].uni_tool_bag
 		end
 		nincant:append(spell.name)
 		nincantcount = nincantcount +1
@@ -671,6 +671,9 @@ function skill_capped(id, data, modified, injected, blocked)
 		end
 	end
 end
+function PrintSomething(_index)
+	print( _index, skill[_index] ) 
+end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
 	if debugmode then
@@ -689,7 +692,7 @@ function updatedisplay()
 		info.skill = {}
 		info.skill.Healing = (skill['Healing Magic Capped'] and "Capped" or skill['Healing Magic Level'])
 		info.skill.Enhancing = (skill['Enhancing Magic Capped'] and "Capped" or skill['Enhancing Magic Level'])
-		info.skill.summoning = (skill['Summoning Magic Capped'] and "Capped" or skill['Summoning Magic Level'])
+		info.skill.Summoning = (skill['Summoning Magic Capped'] and "Capped" or skill['Summoning Magic Level'])
 		info.skill.Ninjutsu = (skill['Ninjutsu Capped'] and "Capped" or skill['Ninjutsu Level'])
 		info.skill.Blue = (skill['Blue Magic Capped'] and "Capped" or skill['Blue Magic Level'])
 		info.skillbulk = info.skill[info.mode]
