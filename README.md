@@ -25,7 +25,7 @@ Skillup's per hour
 
 Total Skillup's
 
-a menu so you dont have to send commands to windower(the commands will continue to work)
+A menu so you dont have to send commands to windower(the commands will continue to work)
 
 
 To download click the "Download Zip" to the right
