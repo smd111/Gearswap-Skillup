@@ -19,7 +19,7 @@
 -- Debug mode (default: false)
 debugmode = false
 require 'actions'
-texts = require('includes/gstexts')
+--texts = require('includes/gstexts')
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -39,6 +39,9 @@ boxa.text.font = 'Dotum'
 boxa.text.size = 9
 boxa.bg = {}
 boxa.bg.alpha = 255
+skill_ups = {}
+total_skill_ups = 0
+skill = {}
 if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
 	include('Saves/skillup_data.lua')
 end
@@ -126,6 +129,7 @@ function get_sets()
 	shutdown = false
 	logoff = false
 	stoptype = "Stop"
+	frame_count = 0
 	initialize(window, box, 'window')
 	initialize(test, boxa, 'test')
 	window:show()
@@ -158,6 +162,8 @@ function initialize(text, settings, a)
 			properties:append('\\cs(255,255,255)Will Stop When Skillup Done')
 		end
 		properties:append('\\cs(255,255,255)Skillup ${start|\\cs(255,0,0)Stoped}')
+		properties:append("\\cs(255,255,255)Skillup's Per Hour \\cs(255,255,0)${skill_ph|0}")
+		properties:append("\\cs(255,255,255)Total Skillup's \\cs(255,255,0)${skill_total|0}")
 		text:clear()
 		text:append(properties:concat('\n'))
 	end
@@ -204,7 +210,6 @@ function status_change(new,old)
 			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 		end
 	end
-	mf_status_change(new,old)
 end
 function filtered_action(spell)
 	if debugmode then
@@ -547,6 +552,7 @@ function self_command(command)
 		skillupcount = 5
 		send_command('wait 1.0;input /ma "'..songspells[songcount]..'" <me>')
 		--add_to_chat(123,"Starting Singing Skill up")
+		initialize(window, box, 'window')
 	end
 	if command == "startblue" then
 		skilluprun = true
@@ -566,6 +572,7 @@ function self_command(command)
 		skilluprun = false
 		--add_to_chat(123,"Stoping Skill up")
 		initialize(window, box, 'window')
+		--updatedisplay()
 	end
 	if command == 'aftershutdown' then
 		stoptype = "Shutdown"
@@ -655,16 +662,7 @@ windower.raw_register_event('action', event_action)
 function skill_capped(id, data, modified, injected, blocked)
 	local packet = packets.parse('incoming', data)
 	if id == 0x062 then
-		healing = (packet['Healing Magic Capped'] and "Capped" or packet['Healing Magic Level'])
-		enhancing = (packet['Enhancing Magic Capped'] and "Capped" or packet['Enhancing Magic Level'])
-		summoning = (packet['Summoning Magic Capped'] and "Capped" or packet['Summoning Magic Level'])
-		ninjutsu = (packet['Ninjutsu Capped'] and "Capped" or packet['Ninjutsu Level'])
-		singing = (packet['Singing Capped'] and "Capped" or packet['Singing Level'])
-		strings = (packet['Stringed Instrument Capped'] and "Capped" or packet['Stringed Instrument Level'])
-		wind = (packet['Wind Instrument Capped'] and "Capped" or packet['Wind Instrument Level'])
-		blue = (packet['Blue Magic Capped'] and "Capped" or packet['Blue Magic Level'])
-		geomancy = (packet['Geomancy Capped'] and "Capped" or packet['Geomancy Level'])
-		handbell = (packet['Handbell Capped'] and "Capped" or packet['Handbell Level'])
+		skill = packet
 		updatedisplay()
 	end
 	if id == 0x0DF and skilluprun then
@@ -682,20 +680,22 @@ function updatedisplay()
 		local info = {}
 		info.mode = skilluptype[skillupcount]
 		info.modeb = skilluprun and info.mode or 'None'
-		info.start = skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)stopped'
-		info.skillssing = singing
-		info.skillstring = strings
-		info.skillwind = wind
-		info.skillgeo = geomancy
-		info.skillbell = handbell
+		info.start = (skilluprun and '\\cs(0,255,0)Started' or 'stopped')
+		info.skillssing = (skill['Singing Capped'] and "Capped" or skill['Singing Level'])
+		info.skillstring = (skill['Stringed Instrument Capped'] and "Capped" or skill['Stringed Instrument Level'])
+		info.skillwind = (skill['Wind Instrument Capped'] and "Capped" or skill['Wind Instrument Level'])
+		info.skillgeo = (skill['Geomancy Capped'] and "Capped" or skill['Geomancy Level'])
+		info.skillbell = (skill['Handbell Capped'] and "Capped" or skill['Handbell Level'])
 		info.skill = {}
-		info.skill.Healing = healing
-		info.skill.Enhancing = enhancing
-		info.skill.summoning = summoning
-		info.skill.Ninjutsu = ninjutsu
-		info.skill.Blue = blue
+		info.skill.Healing = (skill['Healing Magic Capped'] and "Capped" or skill['Healing Magic Level'])
+		info.skill.Enhancing = (skill['Enhancing Magic Capped'] and "Capped" or skill['Enhancing Magic Level'])
+		info.skill.summoning = (skill['Summoning Magic Capped'] and "Capped" or skill['Summoning Magic Level'])
+		info.skill.Ninjutsu = (skill['Ninjutsu Capped'] and "Capped" or skill['Ninjutsu Level'])
+		info.skill.Blue = (skill['Blue Magic Capped'] and "Capped" or skill['Blue Magic Level'])
 		info.skillbulk = info.skill[info.mode]
 		info.type = stoptype
+		info.skill_ph = (get_rate(skill_ups) or 0) / 10
+		info.skill_total = (total_skill_ups or 0) / 10
 		window:update(info)
 		window:show()
 	end
@@ -710,12 +710,6 @@ function file_write()
 		'\nbox.pos.y = '..tostring(box.pos.y)..
 		'')
 	file:close() 
-end
-function mf_status_change(new,old)
-	if new=='Engaged' then
-		add_to_chat(7,"THIS SKILL TOOL WAS NOT MEANT TO DO THIS PLEASE DON'T'")
-		send_command('lua unload gearswap')
-	end
 end
 function mouse(type, x, y, delta, blocked)
 	if type == 0 then
@@ -777,21 +771,44 @@ function mouse(type, x, y, delta, blocked)
 	end
 end
 windower.raw_register_event('mouse', mouse)
+
 function action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
-local skill ={
-    [33] = "Healing",
-    [34] = "Enhancing",
-    [38] = "Summoning",
-    [39] = "Ninjutsu",
-    [40] = "Singing",
-    [41] = "String",
-    [42] = "Wind",
-    [43] = "Blue",
-    [44] = "Geomancy",
-    [45] = "Handbell",
-	}
-	if message_id == 38 and target_id == player.id and skill[param_1] == "Shield" then
-		print('param_2 = '..param_2)
+	if message_id == 38 and target_id == player.id then
+		local ts = os.clock()
+		total_skill_ups = total_skill_ups + param_2
+		skill_ups[ts] = param_2
 	end
+	updatedisplay()
 end
---windower.raw_register_event('action message', action_message)
+windower.raw_register_event('action message', action_message)
+function get_rate(tab)
+    local t = os.clock()
+    local running_total = 0
+    local maximum_timestamp = 29
+    for ts,points in pairs(tab) do
+        local time_diff = t - ts
+        if t - ts > 600 then
+            tab[ts] = nil
+        else
+            running_total = running_total + points
+            if time_diff > maximum_timestamp then
+                maximum_timestamp = time_diff
+            end
+        end
+    end
+    
+    local rate
+    if maximum_timestamp == 29 then
+        rate = 0
+    else
+        rate = math.floor((running_total/maximum_timestamp)*3600)
+    end
+    
+    return rate
+end
+windower.raw_register_event('prerender',function()
+    if frame_count%30 == 0 and window:visible() then
+        updatedisplay()
+    end
+    frame_count = frame_count + 1
+end)
