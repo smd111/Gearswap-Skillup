@@ -551,7 +551,6 @@ function self_command(command)
 	end
 	if command == "skillstop" then
 		skilluprun = false
-		initialize(window, box, 'window')
 	end
 	if command == 'aftershutdown' then
 		stoptype = "Shutdown"
