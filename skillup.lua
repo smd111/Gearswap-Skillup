@@ -19,7 +19,6 @@
 -- Debug mode (default: false)
 debugmode = false
 require 'actions'
---texts = require('includes/gstexts')
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -134,7 +133,6 @@ function get_sets()
 	initialize(test, boxa, 'test')
 	window:show()
 	test:show()
-	--add_to_chat(123,"Skill Up Loaded")
 end
 function initialize(text, settings, a)
 	if debugmode then
@@ -388,16 +386,6 @@ function precast(spell)
 			send_command('wait '..tostring(recast+0.5)..';input /ja "Release" <me>')
 			return
 		end
-		-- if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) then
-			-- cancel_spell()
-			-- while (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) do
-				-- stand()
-				-- if (windower.ffxi.get_ability_recasts()[spell.recast_id] < 1) then
-					-- break
-				-- end
-			-- end
-			-- send_command('wait 1.05;input /ja "Release" <me>')
-		-- end
 	end
 end
 function aftercast(spell)
@@ -523,76 +511,64 @@ function self_command(command)
 		skilluprun = true
 		skillupcount = 2
 		send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
-		--add_to_chat(123,"Starting Geomancy Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "starthealing" then
 		skilluprun = true
 		skillupcount = 1
 		send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
-		--add_to_chat(123,"Starting Healing Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "startenhancing" then
 		skilluprun = true
 		skillupcount = 3
 		send_command('wait 1.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
-		--add_to_chat(123,"Starting Enhancing Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "startninjutsu" then
 		skilluprun = true
 		skillupcount = 4
 		send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
-		--add_to_chat(123,"Starting Ninjutsu Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "startsinging" then
 		skilluprun = true
 		skillupcount = 5
 		send_command('wait 1.0;input /ma "'..songspells[songcount]..'" <me>')
-		--add_to_chat(123,"Starting Singing Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "startblue" then
 		skilluprun = true
 		skillupcount = 6
 		send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
-		--add_to_chat(123,"Starting Blue Magic Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "startsmn" then
 		skilluprun = true
 		skillupcount = 7
 		send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
-		--add_to_chat(123,"Starting Summoning Skill up")
 		initialize(window, box, 'window')
 	end
 	if command == "skillstop" then
 		skilluprun = false
-		--add_to_chat(123,"Stoping Skill up")
 		initialize(window, box, 'window')
-		--updatedisplay()
 	end
 	if command == 'aftershutdown' then
 		stoptype = "Shutdown"
 		shutdown = true
 		logoff = false
-		--add_to_chat(123, '----- Will Shutdown When Skillup Done -----')
 		initialize(window, box, 'window')
 	end
 	if command == 'afterlogoff' then
 		stoptype = "Logoff"
 		shutdown = false
 		logoff = true
-		--add_to_chat(123, '----- Will Logoff When Skillup Done -----')
 		initialize(window, box, 'window')
 	end
 	if command == 'afterStop' then
 		stoptype = "Stop"
 		shutdown = false
 		logoff = false
-		--add_to_chat(123, '----- Will Stop When Skillup Done -----')
 		initialize(window, box, 'window')
 	end
 	updatedisplay()
@@ -670,9 +646,6 @@ function skill_capped(id, data, modified, injected, blocked)
 			windower.send_command('input /heal off')
 		end
 	end
-end
-function PrintSomething(_index)
-	print( _index, skill[_index] ) 
 end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
