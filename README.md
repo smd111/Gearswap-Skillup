@@ -3,9 +3,22 @@ Gearswap-Skillup
 
 THIS TOOL IS ONLY DESIGNED TO SKILLUP THOES MAGIC SKILLS THAT CAN BE SKILLED OUTSIDE OF BATTLE IF YOU WANT TO USE IT FOR OTHER MAGIC SKILLS !!YOUR ON YOUR OWN TO FIND ANY ISSUES I WILL NOT HELP!!
 
-This tool now has a menu so you can select what you want to do
+It does:
+Healing
+Geomancy
+Enhancing
+Ninjutsu(will auto unpack all tools if needed)
+Singing(will switch between wind to string instruments)
+Blue(will useUnbridled Learning if the spell needs it)
+Summoning(will call and release all avatars/elemantals will also use Avatar's Favor/Elemental Siphon/Release automatically)
 
-to download click the "Download Zip" to the right
+It has:
+Skillup's per hour
+Total Skillup's
+a menu so you dont have to send commands to windower(the commands will continue to work)
+
+
+To download click the "Download Zip" to the right
 then extract and copy skillup.lua to your gearswap/data/(playername) folder
 
 you can still use the commands below
