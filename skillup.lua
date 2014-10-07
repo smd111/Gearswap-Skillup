@@ -1,3 +1,4 @@
+--version 1.0.0.0
 --[[How to use:
 	--this tool is set it and forget it you can leave it running for hours as long as se does not log you out it will keep running--
 	1.)place "skillup.lua" in your normal gearswap folder(where all your job files are)
