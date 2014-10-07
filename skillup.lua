@@ -1,4 +1,4 @@
---version 1.0.0.0
+--version 1.0.5.0
 --[[How to use:
 	--this tool is set it and forget it you can leave it running for hours as long as se does not log you out it will keep running--
 	1.)place "skillup.lua" in your normal gearswap folder(where all your job files are)
@@ -701,7 +701,7 @@ function updatedisplay()
 		info.SINc = (color_SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cs(255,255,255)')
 		info.BLUc = (color_BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cs(255,255,255)')
 		info.SMNc = (color_SMN and 'Start Summoning Magic' or '\\cs(255,0,0)Start Summoning Magic\\cs(255,255,255)')
-		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)\\cs(255,255,255)')
+		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)Stop Skillups\\cs(255,255,255)')
 		info.DOWNc = (color_DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cs(255,255,255)')
 		info.LOGc = (color_LOG and  'Logoff After Skillup' or '\\cs(255,0,0)Logoff After Skillup')
 		window:update(info)
@@ -718,32 +718,32 @@ function file_write()
 	file:close() 
 end
 function mouse(type, x, y, delta, blocked)
-	local mx, my = button:extents()
-		local button_lines = button:text():count('\n') + 1
-		local hx = (x - boxa.pos.x)
-		local hy = (y - boxa.pos.y)
-		local location = {}
-		location.offset = my / button_lines
-		location.GEOya = 1
-		location.GEOyb = location.offset
-		location.HELya = location.GEOyb
-		location.HELyb = (location.GEOyb + location.offset)
-		location.ENHya = location.HELyb
-		location.ENHyb = (location.HELyb + location.offset)
-		location.NINya = location.ENHyb
-		location.NINyb = (location.ENHyb + location.offset)
-		location.SINya = location.NINyb
-		location.SINyb = (location.NINyb + location.offset)
-		location.BLUya = location.SINyb
-		location.BLUyb = (location.SINyb + location.offset)
-		location.SMNya = location.BLUyb
-		location.SMNyb = (location.BLUyb + location.offset)
-		location.STOPya = location.SMNyb
-		location.STOPyb = (location.SMNyb + location.offset)
-		location.DOWNya = location.STOPyb
-		location.DOWNyb = (location.STOPyb + location.offset)
-		location.LOGya = location.DOWNyb
-		location.LOGyb = (location.DOWNyb + location.offset)
+	local mx, my = windower.text.get_extents(button._name)
+	local button_lines = button:text():count('\n') + 1 
+	local hx = (x - boxa.pos.x)
+	local hy = (y - boxa.pos.y)
+	local location = {}
+	location.offset = my / button_lines
+	location.GEOya = 1
+	location.GEOyb = location.offset
+	location.HELya = location.GEOyb
+	location.HELyb = (location.GEOyb + location.offset)
+	location.ENHya = location.HELyb
+	location.ENHyb = (location.HELyb + location.offset)
+	location.NINya = location.ENHyb
+	location.NINyb = (location.ENHyb + location.offset)
+	location.SINya = location.NINyb
+	location.SINyb = (location.NINyb + location.offset)
+	location.BLUya = location.SINyb
+	location.BLUyb = (location.SINyb + location.offset)
+	location.SMNya = location.BLUyb
+	location.SMNyb = (location.BLUyb + location.offset)
+	location.STOPya = location.SMNyb
+	location.STOPyb = (location.SMNyb + location.offset)
+	location.DOWNya = location.STOPyb
+	location.DOWNyb = (location.STOPyb + location.offset)
+	location.LOGya = location.DOWNyb
+	location.LOGyb = (location.DOWNyb + location.offset)
 	if type == 0 then
 		if window:hover(x, y) and window:visible() then
 			button:pos((box.pos.x - mx), box.pos.y)
