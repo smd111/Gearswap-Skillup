@@ -18,7 +18,6 @@
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
 -- Debug mode (default: false)
 debugmode = false
-require 'actions'
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -41,11 +40,12 @@ boxa.bg.alpha = 255
 skill_ups = {}
 total_skill_ups = 0
 skill = {}
+last_nin = 'none'
 if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
 	include('Saves/skillup_data.lua')
 end
 window = texts.new(box)
-test = texts.new(boxa)
+button = texts.new(boxa)
 function get_sets()
 	skilluprun = false
 	sets.brd = {}
@@ -68,50 +68,50 @@ function get_sets()
 	nincant = T{}
 	nincantcount = 0
 	nin_tools ={
-		["Monomi: Ichi"] = {tool='Sanjaku-Tenugui',tool_bag="Toolbag (Sanja)",tool_bag_id=5417,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Aisha: Ichi"] = {tool='Soshi',tool_bag="Toolbag (Soshi)",tool_bag_id=5734,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Katon: Ichi"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",tool_bag_id=5308,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Katon: Ni"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",tool_bag_id=5308,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Katon: San"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",tool_bag_id=5308,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Hyoton: Ichi"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",tool_bag_id=5309,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Hyoton: Ni"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",tool_bag_id=5309,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Hyoton: San"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",tool_bag_id=5309,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Huton: Ichi"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",tool_bag_id=5310,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Huton: Ni"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",tool_bag_id=5310,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Huton: San"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",tool_bag_id=5310,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Doton: Ichi"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",tool_bag_id=5311,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Doton: Ni"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",tool_bag_id=5311,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Doton: San"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",tool_bag_id=5311,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Raiton: Ichi"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",tool_bag_id=5312,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Raiton: Ni"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",tool_bag_id=5312,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Raiton: San"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",tool_bag_id=5312,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Suiton: Ichi"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",tool_bag_id=5313,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Suiton: Ni"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",tool_bag_id=5313,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Suiton: San"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",tool_bag_id=5313,uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)",uni_tool_bag_id=5867},
-		["Utsusemi: Ichi"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",tool_bag_id=5314,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Utsusemi: Ni"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",tool_bag_id=5314,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Utsusemi: San"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",tool_bag_id=5314,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Jubaku: Ichi"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",tool_bag_id=5315,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Jubaku: Ni"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",tool_bag_id=5315,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Jubaku: San"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",tool_bag_id=5315,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Hojo: Ichi"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",tool_bag_id=5316,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Hojo: Ni"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",tool_bag_id=5316,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Hojo: San"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",tool_bag_id=5316,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Kurayami: Ichi"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",tool_bag_id=5317,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Kurayami: Ni"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",tool_bag_id=5317,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Kurayami: San"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",tool_bag_id=5317,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Dokumori: Ichi"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",tool_bag_id=5318,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Dokumori: Ni"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",tool_bag_id=5318,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Dokumori: San"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",tool_bag_id=5318,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Tonko: Ichi"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",tool_bag_id=5319,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Tonko: Ni"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",tool_bag_id=5319,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Tonko: San"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",tool_bag_id=5319,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Gekka: Ichi"] = {tool='Ranka',tool_bag="Toolbag (Ranka)",tool_bag_id=6265,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Yain: Ichi"] = {tool='Furusumi',tool_bag="Toolbag (Furu)",tool_bag_id=6266,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Myoshu: Ichi"] = {tool='Kabenro',tool_bag="Toolbg. (Kaben)",tool_bag_id=5863,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Yurin: Ichi"] = {tool='Jinko',tool_bag="Toolbag (Jinko)",tool_bag_id=5864,uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)",uni_tool_bag_id=5869},
-		["Kakka: Ichi"] = {tool='Ryuno',tool_bag="Toolbag (Ryuno)",tool_bag_id=5865,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
-		["Migawari: Ichi"] = {tool='Mokujin',tool_bag="Toolbag (Moku)",tool_bag_id=5866,uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)",uni_tool_bag_id=5868},
+		["Monomi: Ichi"] = {tool='Sanjaku-Tenugui',tool_bag="Toolbag (Sanja)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Aisha: Ichi"] = {tool='Soshi',tool_bag="Toolbag (Soshi)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Katon: Ichi"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Katon: Ni"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Katon: San"] = {tool='Uchitake',tool_bag="Toolbag (Uchi)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Hyoton: Ichi"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Hyoton: Ni"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Hyoton: San"] = {tool='Tsurara',tool_bag="Toolbag (Tsura)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Huton: Ichi"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Huton: Ni"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Huton: San"] = {tool='Kawahori-Ogi',tool_bag="Toolbag (Kawa)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Doton: Ichi"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Doton: Ni"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Doton: San"] = {tool='Makibishi',tool_bag="Toolbag (Maki)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Raiton: Ichi"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Raiton: Ni"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Raiton: San"] = {tool='Hiraishin',tool_bag="Toolbag (Hira)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Suiton: Ichi"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Suiton: Ni"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Suiton: San"] = {tool='Mizu-Deppo',tool_bag="Toolbag (Mizu)",uni_tool="Inoshishinofuda",uni_tool_bag="Toolbag (Ino)"},
+		["Utsusemi: Ichi"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Utsusemi: Ni"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Utsusemi: San"] = {tool='Shihei',tool_bag="Toolbag (Shihe)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Jubaku: Ichi"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Jubaku: Ni"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Jubaku: San"] = {tool='Jusatsu',tool_bag="Toolbag (Jusa)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Hojo: Ichi"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Hojo: Ni"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Hojo: San"] = {tool='Kaginawa',tool_bag="Toolbag (Kagi)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Kurayami: Ichi"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Kurayami: Ni"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Kurayami: San"] = {tool='Sairui-Ran',tool_bag="Toolbag (Sai)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Dokumori: Ichi"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Dokumori: Ni"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Dokumori: San"] = {tool='Kodoku',tool_bag="Toolbag (Kodo)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Tonko: Ichi"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Tonko: Ni"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Tonko: San"] = {tool='Shinobi-Tabi',tool_bag="Toolbag (Shino)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Gekka: Ichi"] = {tool='Ranka',tool_bag="Toolbag (Ranka)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Yain: Ichi"] = {tool='Furusumi',tool_bag="Toolbag (Furu)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Myoshu: Ichi"] = {tool='Kabenro',tool_bag="Toolbg. (Kaben)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Yurin: Ichi"] = {tool='Jinko',tool_bag="Toolbag (Jinko)",uni_tool="Chonofuda",uni_tool_bag="Toolbag (Cho)"},
+		["Kakka: Ichi"] = {tool='Ryuno',tool_bag="Toolbag (Ryuno)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
+		["Migawari: Ichi"] = {tool='Mokujin',tool_bag="Toolbag (Moku)",uni_tool="Shikanofuda",uni_tool_bag="Toolbag (Shika)"},
 		}
 	songspells = {"Knight's Minne","Advancing March","Adventurer's Dirge","Archer's Prelude","Army's Paeon","Army's Paeon II","Army's Paeon III","Army's Paeon IV","Army's Paeon V","Army's Paeon VI","Bewitching Etude","Blade Madrigal","Chocobo Mazurka","Dark Carol","Dark Carol II","Dextrous Etude","Dragonfoe Mambo","Earth Carol","Earth Carol II","Enchanting Etude","Fire Carol","Fire Carol II","Foe Sirvente","Fowl Aubade","Goblin Gavotte","Goddess's Hymnus","Gold Capriccio","Herb Pastoral","Herculean Etude","Hunter's Prelude","Ice Carol","Ice Carol II","Knight's Minne II","Knight's Minne III","Knight's Minne IV","Knight's Minne V","Learned Etude","Light Carol","Light Carol II","Lightning Carol","Lightning Carol II","Logical Etude","Mage's Ballad","Mage's Ballad II","Mage's Ballad III","Puppet's Operetta","Quick Etude","Raptor Mazurka","Sage Etude","Scop's Operetta","Sentinel's Scherzo","Sheepfoe Mambo","Shining Fantasia","Sinewy Etude","Spirited Etude","Swift Etude","Sword Madrigal","Uncanny Etude","Valor Minuet","Valor Minuet II","Valor Minuet III","Valor Minuet IV","Valor Minuet V","Victory March","Vital Etude","Vivacious Etude","Warding Round","Water Carol","Water Carol II","Wind Carol","Wind Carol II"}
 	songcount = 1
@@ -130,14 +130,11 @@ function get_sets()
 	stoptype = "Stop"
 	frame_count = 0
 	initialize(window, box, 'window')
-	initialize(test, boxa, 'test')
+	initialize(button, boxa, 'button')
 	window:show()
-	test:show()
+	button:show()
 end
 function initialize(text, settings, a)
-	if debugmode then
-		add_to_chat(7,"1")
-	end
 	if a == 'window' then
 		local properties = L{}
 		properties:append('--Skill Up--')
@@ -165,7 +162,7 @@ function initialize(text, settings, a)
 		text:clear()
 		text:append(properties:concat('\n'))
 	end
-	if a == 'test' then
+	if a == 'button' then
 		local properties = L{}
 		properties:append('Start GEO')
 		properties:append('Start Healing')
@@ -184,12 +181,9 @@ end
 function file_unload()
 	--file_write()
     window:destroy()
-    test:destroy()
+    button:destroy()
 end
 function status_change(new,old)
-	if debugmode then
-		add_to_chat(7,"2")
-	end
 	if new=='Idle' then
 		equip(sets.Idle)
 		if skilluptype[skillupcount] == "Geomancy" and skilluprun then
@@ -210,65 +204,65 @@ function status_change(new,old)
 	end
 end
 function filtered_action(spell)
-	if debugmode then
-		add_to_chat(7,"3")
-	end
-	if spell.type == "Geomancy" and skilluprun then
-		cancel_spell()
-		geocount = (geocount % #geospells) + 1
-		send_command('input /ma "'..geospells[geocount]..'" <me>')
-		return
-	elseif spell.skill == "Healing Magic" and skilluprun then
-		cancel_spell()
-		healingcount = (healingcount % #healingspells) + 1
-		send_command('input /ma "'..healingspells[healingcount]..'" <me>')
-		return
-	elseif spell.skill == "Enhancing Magic" and skilluprun then
-		cancel_spell()
-		enhancecount = (enhancecount % #enhancespells) + 1
-		send_command('input /ma "'..enhancespells[enhancecount]..'" <me>')
-		return
-	elseif spell.skill == "Ninjutsu" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
+	if skilluprun then
+		if spell.type == "Geomancy" then
 			cancel_spell()
-			nincount = (nincount % #ninspells) + 1
-			send_command('input /ma "'..ninspells[nincount]..'" <me>')
+			geocount = (geocount % #geospells) + 1
+			send_command('input /ma "'..geospells[geocount]..'" <me>')
 			return
-		end
-		if nin_tool_check(spell) then
+		elseif spell.skill == "Healing Magic" then
 			cancel_spell()
-			send_command('input /item "'..nin_tool_open()..'" <me>')
-		end
-	elseif spell.skill == "Singing" and skilluprun then
-		cancel_spell()
-		songcount = (songcount % #songspells) + 1
-		send_command('input /ma "'..songspells[songcount]..'" <me>')
-		return
-	elseif spell.skill == "Blue Magic" and skilluprun then
-		cancel_spell()
-		blucount = (blucount % #bluspells) + 1
-		send_command('input /ma "'..bluspells[blucount]..'" <me>')
-		return
-	elseif spell.type == "SummonerPact" and skilluprun then
-		cancel_spell()
-		smncount = (smncount % #smnspells) + 1
-		send_command('input /ma "'..smnspells[smncount]..'" <me>')
-		return
-	elseif spell.name == "Unbridled Learning" then
-		cancel_spell()
-		blucount = (blucount % #bluspells) + 1
-		send_command('input /ma "'..bluspells[blucount]..'" <me>')
-		return
-	elseif spell.name == "Avatar's Favor" then
+			healingcount = (healingcount % #healingspells) + 1
+			send_command('input /ma "'..healingspells[healingcount]..'" <me>')
+			return
+		elseif spell.skill == "Enhancing Magic" then
+			cancel_spell()
+			enhancecount = (enhancecount % #enhancespells) + 1
+			send_command('input /ma "'..enhancespells[enhancecount]..'" <me>')
+			return
+		elseif spell.skill == "Ninjutsu" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				nincount = (nincount % #ninspells) + 1
+				send_command('input /ma "'..ninspells[nincount]..'" <me>')
+				return
+			elseif nin_tool_check(spell) then
+				cancel_spell()
+				last_nin = ninspells[nincount]
+				send_command('input /item "'..nin_tool_open()..'" <me>')
+			end
+		elseif spell.skill == "Singing" then
+			cancel_spell()
+			songcount = (songcount % #songspells) + 1
+			send_command('input /ma "'..songspells[songcount]..'" <me>')
+			return
+		elseif spell.skill == "Blue Magic" then
+			cancel_spell()
+			blucount = (blucount % #bluspells) + 1
+			send_command('input /ma "'..bluspells[blucount]..'" <me>')
+			return
+		elseif spell.type == "SummonerPact" then
+			cancel_spell()
+			smncount = (smncount % #smnspells) + 1
+			send_command('input /ma "'..smnspells[smncount]..'" <me>')
+			return
+		elseif spell.english == "Unbridled Learning" then
+			cancel_spell()
+			blucount = (blucount % #bluspells) + 1
+			send_command('input /ma "'..bluspells[blucount]..'" <me>')
+			return
+		elseif spell.english == "Avatar's Favor" then
 			cancel_spell()
 			send_command('input /ja "Release" <me>')
 			return
+		end
+		return
+	else
+		shutdown_logoff()
+		return
 	end
 end
-function precast(spell)
-	if debugmode then
-		add_to_chat(7,"4")
-	end
+function precast(spell) -- done
 	if spell then
 		if spell.mp_cost > player.mp then
 			cancel_spell()
@@ -276,110 +270,122 @@ function precast(spell)
 			return
 		end
 	end
-	if spell.type == "Geomancy" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			geocount = (geocount % #geospells) + 1
-			send_command('input /ma "'..geospells[geocount]..'" <me>')
-			return
-		else
-			geocount = (geocount % #geospells) + 1
-		end
-	elseif spell.skill == "Healing Magic" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			healingcount = (healingcount % #healingspells) + 1
-			send_command('input /ma "'..healingspells[healingcount]..'" <me>')
-			return
-		else
-			healingcount = (healingcount % #healingspells) + 1
-		end
-	elseif spell.skill == "Enhancing Magic" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			enhancecount = (enhancecount % #enhancespells) + 1
-			send_command('input /ma "'..enhancespells[enhancecount]..'" <me>')
-			return
-		else
-			enhancecount = (enhancecount % #enhancespells) + 1
-		end
-	elseif spell.skill == "Ninjutsu" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			nincount = (nincount % #ninspells) + 1
-			send_command('input /ma "'..ninspells[nincount]..'" <me>')
-			return
-		else
-			nincount = (nincount % #ninspells) + 1
-		end
-	elseif spell.skill == "Singing" and skilluprun then
-		if not skill['Stringed Instrument Capped'] then
-			equip(sets.brd.string)
-		elseif not skill['Wind Instrument Capped'] then
-			equip(sets.brd.wind)
-		end
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			songcount = (songcount % #songspells) + 1
-			send_command('input /ma "'..songspells[songcount]..'" <me>')
-			return
-		else
-			songcount = (songcount % #songspells) + 1
-		end
-	elseif spell.skill == "Blue Magic" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			blucount = (blucount % #bluspells) + 1
-			send_command('input /ma "'..bluspells[blucount]..'" <me>')
-			return
-		else
-			blucount = (blucount % #bluspells) + 1
-		end
-	elseif spell.type == "SummonerPact" and skilluprun then
-		if not windower.ffxi.get_spells()[spell.id] then
-			cancel_spell()
-			smncount = (smncount % #smnspells) + 1
-			send_command('input /ma "'..smnspells[smncount]..'" <me>')
-			return
-		else
-			smncount = (smncount % #smnspells) + 1
-		end
-	end
-	if spell.name == "Avatar's Favor" then
-		if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) or buffactive["Avatar's Favor"] then
-			cancel_spell()
-			send_command('input /ja "Release" <me>')
-			return
-		end
-	elseif spell.name == "Elemental Siphon" then
-		if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) or player.mpp > 75 then
-			cancel_spell()
-			send_command('input /ja "Release" <me>')
-			return
-		end
-	elseif spell.name == "Unbridled Learning" then
-		if bluspellul:contains(bluspells[blucount]) and not windower.ffxi.get_spells()[ulid[bluspells[blucount]]] then
-			if not buffactive["Unbridled Learning"] then
-				if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) then
+	if skilluprun then
+		if skilluptype[skillupcount] == "Healing" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				healingcount = (healingcount % #healingspells) + 1
+				send_command('input /ma "'..healingspells[healingcount]..'" <me>')
+				return
+			else
+				healingcount = (healingcount % #healingspells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Geomancy" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				geocount = (geocount % #geospells) + 1
+				send_command('input /ma "'..geospells[geocount]..'" <me>')
+				return
+			else
+				geocount = (geocount % #geospells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Enhancing" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				enhancecount = (enhancecount % #enhancespells) + 1
+				send_command('input /ma "'..enhancespells[enhancecount]..'" <me>')
+				return
+			else
+				enhancecount = (enhancecount % #enhancespells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Ninjutsu" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				nincount = (nincount % #ninspells) + 1
+				send_command('input /ma "'..ninspells[nincount]..'" <me>')
+				return
+			else
+				nincount = (nincount % #ninspells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Singing" then
+			if not skill['Stringed Instrument Capped'] then
+				equip(sets.brd.string)
+			elseif not skill['Wind Instrument Capped'] then
+				equip(sets.brd.wind)
+			end
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				songcount = (songcount % #songspells) + 1
+				send_command('input /ma "'..songspells[songcount]..'" <me>')
+				return
+			else
+				songcount = (songcount % #songspells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Blue" then
+			if spell.skill == "Blue Magic" then
+				if not windower.ffxi.get_spells()[spell.id] then
+					cancel_spell()
+					blucount = (blucount % #bluspells) + 1
+					send_command('input /ma "'..bluspells[blucount]..'" <me>')
+					return
+				else
+					blucount = (blucount % #bluspells) + 1
+				end
+			elseif spell.english == "Unbridled Learning" then
+				if bluspellul:contains(bluspells[blucount]) and not windower.ffxi.get_spells()[ulid[bluspells[blucount]]] then
+					if not buffactive["Unbridled Learning"] then
+						if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) then
+							cancel_spell()
+							blucount = (blucount % #bluspells) + 1
+							send_command('input /ma "'..bluspells[blucount]..'" <me>')
+							return
+						end
+					end
+				else
 					cancel_spell()
 					blucount = (blucount % #bluspells) + 1
 					send_command('input /ma "'..bluspells[blucount]..'" <me>')
 					return
 				end
 			end
-		else
-			cancel_spell()
-			blucount = (blucount % #bluspells) + 1
-			send_command('input /ma "'..bluspells[blucount]..'" <me>')
-			return
+		elseif skilluptype[skillupcount] == "Summoning" then
+			if spell.type == "SummonerPact" then
+				if not windower.ffxi.get_spells()[spell.id] then
+					cancel_spell()
+					smncount = (smncount % #smnspells) + 1
+					send_command('input /ma "'..smnspells[smncount]..'" <me>')
+					return
+				else
+					smncount = (smncount % #smnspells) + 1
+				end
+			elseif spell.english == "Avatar's Favor" then
+				if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) or buffactive["Avatar's Favor"] then
+					cancel_spell()
+					send_command('input /ja "Release" <me>')
+					return
+				end
+			elseif spell.english == "Elemental Siphon" then
+				if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) or player.mpp > 75 then
+				cancel_spell()
+				send_command('input /ja "Release" <me>')
+				return
+				end
+			end
+			if spell.english == "Release" then
+				if not pet.isvalid then
+					cancel_spell()
+					send_command('input /heal on')
+					return
+				end
+				local recast = windower.ffxi.get_ability_recasts()[spell.recast_id]
+				if (recast > 0) then
+					cancel_spell()
+					send_command('wait '..tostring(recast+0.5)..';input /ja "Release" <me>')
+					return
+				end
+			end
 		end
-	end
-	if spell.name == "Release" then
-		if not pet.isvalid then
-			cancel_spell()
-			send_command('input /heal on')
-			return
-		end
+	elseif spell.english == "Release" then
 		local recast = windower.ffxi.get_ability_recasts()[spell.recast_id]
 		if (recast > 0) then
 			cancel_spell()
@@ -389,124 +395,111 @@ function precast(spell)
 	end
 end
 function aftercast(spell)
-	if debugmode then
-		add_to_chat(7,"5")
-	end
 	if skilluprun then
 		if spell.interrupted then
-			if spell.type == "Geomancy" then
+			if skilluptype[skillupcount] == "Geomancy" then
 				send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
-			elseif spell.skill == "Healing Magic" then
+			elseif skilluptype[skillupcount] == "Healing" then
 				send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
-			elseif spell.skill == "Enhancing Magic" then
+			elseif skilluptype[skillupcount] == "Enhancing" then
 				send_command('wait 3.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
-			elseif spell.skill == "Ninjutsu" then
+			elseif skilluptype[skillupcount] == "Ninjutsu" then
 				send_command('wait 3.0;input /ma "'..ninspells[nincount]..'" <me>')
-			elseif spell.skill == "Singing" then
+			elseif skilluptype[skillupcount] == "Singing" then
 				send_command('wait 3.0;input /ma "'..songspells[songcount]..'" <me>')
-			elseif spell.skill == "Blue Magic" then
+			elseif skilluptype[skillupcount] == "Blue" then
 				send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
-			elseif spell.type == "SummonerPact" then
+			elseif skilluptype[skillupcount] == "Summoning" then
 				send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 			end
 			return
 		end
-		if spell.type == "Geomancy" then
+		if skilluptype[skillupcount] == "Geomancy" then
 			if skill['Geomancy Capped'] and skill['Handbell Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
-		elseif spell.skill == "Healing Magic" then
+		elseif skilluptype[skillupcount] == "Healing" then
 			if skill['Healing Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
-		elseif spell.skill == "Enhancing Magic" then
+		elseif skilluptype[skillupcount] == "Enhancing" then
 			if skill['Enhancing Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
-		elseif spell.skill == "Ninjutsu" then
+		elseif skilluptype[skillupcount] == "Ninjutsu" then
 			if skill['Ninjutsu Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
+			elseif spell.type == 'Item' and spell.english == tbid then
+				send_command('wait 1.0;input /ma "'..last_nin..'" <me>')
+				tbid = 'none'
 			end
 			send_command('wait 3.0;input /ma "'..ninspells[nincount]..'" <me>')
-		elseif spell.skill == "Singing" then
+		elseif skilluptype[skillupcount] == "Singing" then
 			if skill['Singing Capped'] and skill['Stringed Instrument Capped'] and skill['Wind Instrument Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
 			end
 			send_command('wait 3.0;input /ma "'..songspells[songcount]..'" <me>')
-		elseif spell.skill == "Blue Magic" then
+		elseif skilluptype[skillupcount] == "Blue" then
 			if skill['Blue Magic Capped'] then
 				skilluprun = false
 				shutdown_logoff()
 				return
+			elseif spell.english == "Unbridled Learning" then
+				send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 			end
 			send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
-		elseif spell.type == "SummonerPact" then
+		elseif skilluptype[skillupcount] == "Summoning" then
 			if skill['Summoning Magic Capped'] then
 				skilluprun = false
 				send_command('wait 4.0;input /ja "Release" <me>')
 				return
 			end
-			if spell.name:contains('Spirit') and (spell.element == world.weather_element or spell.element == world.day_element)then
+			if spell.english:contains('Spirit') and (spell.element == world.weather_element or spell.element == world.day_element)then
 				send_command('wait 4.0;input /ja "Elemental Siphon" <me>')
 			else
 				send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
 			end
-		elseif spell.name == "Release" then
-			if spell.interrupted then
-				send_command('wait 0.5; input /ja "Release" <me>')
-				return
+			if spell.english == "Release" then
+				if spell.interrupted then
+					send_command('wait 0.5; input /ja "Release" <me>')
+					return
+				end
+			elseif spell.english == "Avatar's Favor" then
+				send_command('wait 1.0;input /ja "Release" <me>')
+			elseif spell.english == "Elemental Siphon" then
+				send_command('wait 1.0;input /ja "Release" <me>')
 			end
 			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
-		elseif spell.name == "Avatar's Favor" then
-			send_command('wait 1.0;input /ja "Release" <me>')
-		elseif spell.name == "Elemental Siphon" then
-			send_command('wait 1.0;input /ja "Release" <me>')
-		elseif spell.name == "Unbridled Learning" then
-			send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 		end
+		return
 	elseif spell.type == "SummonerPact" then
 		if skill['Summoning Magic Capped'] then
 			skilluprun = false
 			send_command('wait 4.0;input /ja "Release" <me>')
 			return
 		end
-		if spell.name:contains('Spirit') then
-			send_command('wait 4.0;input /ja "Elemental Siphon" <me>')
-		else
-			send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
-		end
-	elseif spell.name == "Release" then
+	elseif spell.english == "Release" then
 		if skill['Summoning Magic Capped'] then
 			shutdown_logoff()
-			return
 		end
-		if pet.isvalid then
-			if spell.interrupted then
-				send_command('wait 0.5; input /ja "Release" <me>')
-				return
-			end
-		end
-	elseif spell.name == "Avatar's Favor" then
+	elseif spell.english == "Avatar's Favor" then
 		send_command('wait 1.0;input /ja "Release" <me>')
 	end
 end
 function self_command(command)
-	if debugmode then
-		add_to_chat(7,"6")
-	end
 	if command == "startgeo" then
 		skilluprun = true
 		skillupcount = 2
@@ -573,10 +566,7 @@ function self_command(command)
 	updatedisplay()
 end
 function shutdown_logoff()
-	if debugmode then
-		add_to_chat(7,"7")
-	end
-		add_to_chat(123,"Auto stop skillup")
+	add_to_chat(123,"Auto stop skillup")
 	if logoff then
 		send_command('wait 3.0;input /logout')
 	elseif shutdown then
@@ -586,30 +576,25 @@ function shutdown_logoff()
 	updatedisplay()
 end
 function nin_tool_check(spell)
-	if debugmode then
-		add_to_chat(7,"8")
-	end
-	if (player.inventory[nin_tools[spell.name].tool] == nil  or player.inventory[nin_tools[spell.name].uni_tool] == nil) 
-	and (player.inventory[nin_tools[spell.name].tool_bag] ~= nil or player.inventory[nin_tools[spell.name].uni_tool_bag] ~= nil) then
+	if (player.inventory[nin_tools[spell.english].tool] == nil  or player.inventory[nin_tools[spell.english].uni_tool] == nil) 
+	and (player.inventory[nin_tools[spell.english].tool_bag] ~= nil or player.inventory[nin_tools[spell.english].uni_tool_bag] ~= nil) then
 		return true
 	else
-		add_to_chat(7,"No Tools Available To Cast "..spell.name)
+		add_to_chat(7,"No Tools Available To Cast "..spell.english)
 	end
 end
 function nin_tool_open()
-	if debugmode then
-		add_to_chat(7,"9")
-	end
-	if nincantcount ~= #ninspells and not nincant:contains(spell.name) then
-		if player.inventory[nin_tools[spell.name].tool_bag] ~= nil then
-			tbid = nin_tools[spell.name].tool_bag_id
-			return nin_tools[spell.name].tool_bag
-		elseif player.inventory[nin_tools[spell.name].uni_tool_bag] ~= nil then
-			tbid = nin_tools[spell.name].uni_tool_bag_id
-			return nin_tools[spell.name].uni_tool_bag
+	if nincantcount ~= #ninspells and not nincant:contains(spell.english) then
+		if player.inventory[nin_tools[spell.english].tool_bag] ~= nil then
+			tbid = nin_tools[spell.english].tool_bag
+			return nin_tools[spell.english].tool_bag
+		elseif player.inventory[nin_tools[spell.english].uni_tool_bag] ~= nil then
+			tbid = nin_tools[spell.english].uni_tool_bag
+			return nin_tools[spell.english].uni_tool_bag
+		else
+			nincant:append(spell.english)
+			nincantcount = nincantcount +1
 		end
-		nincant:append(spell.name)
-		nincantcount = nincantcount +1
 	elseif nincantcount ~= #ninspells then
 		cancel_spell()
 		nincount = (nincount % #ninspells) + 1
@@ -618,22 +603,9 @@ function nin_tool_open()
 	else
 		skilluprun = false
 		cancel_spell()
-		add_to_chat(7,"No Tools Available To Cast Any NIN Spells That You Have")
+		add_to_chat(7,"No Tools Available To Cast Any Ninjutsu")
 	end
 end
-function event_action(act)
-	if debugmode then
-		add_to_chat(7,"10")
-	end
-	action = Action(act)
-    if action:get_category_string() == 'item_finish' then
-        if action.raw.param == tbid and player.id == action.raw.actor_id then
-			send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
-			tbid = 0
-		end
-    end
-end
-windower.raw_register_event('action', event_action)
 function skill_capped(id, data, modified, injected, blocked)
 	local packet = packets.parse('incoming', data)
 	if id == 0x062 then
@@ -648,9 +620,6 @@ function skill_capped(id, data, modified, injected, blocked)
 end
 windower.raw_register_event('incoming chunk', skill_capped)
 function updatedisplay()
-	if debugmode then
-		add_to_chat(7,"12")
-	end
 	local info = {}
 		info.mode = skilluptype[skillupcount]
 		info.modeb = skilluprun and info.mode or 'None'
@@ -674,9 +643,6 @@ function updatedisplay()
 		window:show()
 end
 function file_write()
-	if debugmode then
-		add_to_chat(7,"13")
-	end
 	local file = io.open(lua_base_path..'data/'..player.name..'/Saves/skillup_data.lua',"w")
 	file:write(
 		'box.pos.x = '..tostring(box.pos.x)..
@@ -685,19 +651,21 @@ function file_write()
 	file:close() 
 end
 function mouse(type, x, y, delta, blocked)
+	local mx, my = button:extents()
 	if type == 0 then
 		if window:hover(x, y) and window:visible() then
-			test:pos((box.pos.x - 139), box.pos.y)
-		elseif test:hover(x, y) and test:visible() then
-			window:pos((boxa.pos.x + 139), boxa.pos.y)
+			button:pos((box.pos.x - mx), box.pos.y)
+		elseif button:hover(x, y) and button:visible() then
+			window:pos((boxa.pos.x + mx), boxa.pos.y)
 		else
 			return
 		end
 	elseif type == 2 then
+		local button_lines = button:text():count('\n') + 1
 		local hx = (x - boxa.pos.x)
 		local hy = (y - boxa.pos.y)
 		local location = {}
-		location.offset = boxa.text.size * 1.566666666666667
+		location.offset = my / button_lines
 		location.GEOya = 1
 		location.GEOyb = location.offset
 		location.HELya = location.GEOyb
@@ -718,7 +686,7 @@ function mouse(type, x, y, delta, blocked)
 		location.DOWNyb = (location.STOPyb + location.offset)
 		location.LOGya = location.DOWNyb
 		location.LOGyb = (location.DOWNyb + location.offset)
-		if test:hover(x, y) and test:visible() then
+		if button:hover(x, y) and button:visible() then
 			if (hy > location.GEOya and hy < location.GEOyb) then
 				send_command("gs c startgeo")
 			elseif (hy > location.HELya and hy < location.HELyb) then
