@@ -186,41 +186,63 @@ end
 function status_change(new,old)
 	if new=='Idle' then
 		equip(sets.Idle)
-		if skilluptype[skillupcount] == "Geomancy" and skilluprun then
-			send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Healing" and skilluprun then
-			send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Enhancing" and skilluprun then
-			send_command('wait 1.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Ninjutsu" and skilluprun then
-			send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Singing" and skilluprun then
-			send_command('wait 1.0;input /ma "'..songspells[songcount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Blue" and skilluprun then
-			send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
-		elseif skilluptype[skillupcount] == "Summoning" and skilluprun then
-			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+		if skilluprun then
+			if skilluptype[skillupcount] == "Geomancy" then
+				send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Healing" then
+				send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Enhancing" then
+				send_command('wait 1.0;input /ma "'..enhancespells[enhancecount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Ninjutsu" then
+				send_command('wait 1.0;input /ma "'..ninspells[nincount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Singing" then
+				send_command('wait 1.0;input /ma "'..songspells[songcount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Blue" then
+				send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Summoning" then
+				send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+			end
 		end
 	end
 end
 function filtered_action(spell)
 	if skilluprun then
 		if spell.type == "Geomancy" then
+			if skill['Geomancy Capped'] and skill['Handbell Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			geocount = (geocount % #geospells) + 1
 			send_command('input /ma "'..geospells[geocount]..'" <me>')
 			return
 		elseif spell.skill == "Healing Magic" then
+			if skill['Healing Magic Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			healingcount = (healingcount % #healingspells) + 1
 			send_command('input /ma "'..healingspells[healingcount]..'" <me>')
 			return
 		elseif spell.skill == "Enhancing Magic" then
+			if skill['Enhancing Magic Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			enhancecount = (enhancecount % #enhancespells) + 1
 			send_command('input /ma "'..enhancespells[enhancecount]..'" <me>')
 			return
 		elseif spell.skill == "Ninjutsu" then
+			if skill['Ninjutsu Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			if not windower.ffxi.get_spells()[spell.id] then
 				cancel_spell()
 				nincount = (nincount % #ninspells) + 1
@@ -232,33 +254,55 @@ function filtered_action(spell)
 				send_command('input /item "'..nin_tool_open()..'" <me>')
 			end
 		elseif spell.skill == "Singing" then
+			if skill['Singing Capped'] and skill['Stringed Instrument Capped'] and skill['Wind Instrument Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			songcount = (songcount % #songspells) + 1
 			send_command('input /ma "'..songspells[songcount]..'" <me>')
 			return
 		elseif spell.skill == "Blue Magic" then
+			if skill['Blue Magic Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			blucount = (blucount % #bluspells) + 1
 			send_command('input /ma "'..bluspells[blucount]..'" <me>')
 			return
 		elseif spell.type == "SummonerPact" then
+			if skill['Summoning Magic Capped'] then
+				skilluprun = false
+				send_command('wait 4.0;input /ja "Release" <me>')
+				return
+			end
 			cancel_spell()
 			smncount = (smncount % #smnspells) + 1
 			send_command('input /ma "'..smnspells[smncount]..'" <me>')
 			return
 		elseif spell.english == "Unbridled Learning" then
+			if skill['Blue Magic Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
 			cancel_spell()
 			blucount = (blucount % #bluspells) + 1
 			send_command('input /ma "'..bluspells[blucount]..'" <me>')
 			return
 		elseif spell.english == "Avatar's Favor" then
+			if skill['Summoning Magic Capped'] then
+				skilluprun = false
+				send_command('wait 4.0;input /ja "Release" <me>')
+				return
+			end
 			cancel_spell()
 			send_command('input /ja "Release" <me>')
 			return
 		end
-		return
-	else
-		shutdown_logoff()
 		return
 	end
 end
@@ -607,8 +651,8 @@ function nin_tool_open()
 	end
 end
 function skill_capped(id, data, modified, injected, blocked)
-	local packet = packets.parse('incoming', data)
 	if id == 0x062 then
+		local packet = packets.parse('incoming', data)
 		skill = packet
 		updatedisplay()
 	end
