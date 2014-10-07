@@ -30,7 +30,7 @@ box.bg = {}
 box.bg.alpha = 255
 boxa = {}
 boxa.pos = {}
-boxa.pos.x = box.pos.x - 139
+boxa.pos.x = box.pos.x - 140
 boxa.pos.y = box.pos.y
 boxa.text = {}
 boxa.text.font = 'Dotum'
@@ -41,6 +41,16 @@ skill_ups = {}
 total_skill_ups = 0
 skill = {}
 last_nin = 'none'
+color_GEO = true
+color_HEL = true
+color_ENH = true
+color_NIN = true
+color_SIN = true
+color_BLU = true
+color_SMN = true
+color_STOP = true
+color_DOWN = true
+color_LOG = true
 if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
 	include('Saves/skillup_data.lua')
 end
@@ -164,16 +174,16 @@ function initialize(text, settings, a)
 	end
 	if a == 'button' then
 		local properties = L{}
-		properties:append('Start GEO')
-		properties:append('Start Healing')
-		properties:append('Start Enhancing')
-		properties:append('Start Ninjutsu')
-		properties:append('Start Singing')
-		properties:append('Start Blue Magic')
-		properties:append('Start Summoning Magic')
-		properties:append('Stop Skillups')
-		properties:append('Shutdown After Skillup')
-		properties:append('Logoff After Skillup')
+		properties:append('${GEOc}')
+		properties:append('${HELc}')
+		properties:append('${ENHc}')
+		properties:append('${NINc}')
+		properties:append('${SINc}')
+		properties:append('${BLUc}')
+		properties:append('${SMNc}')
+		properties:append('${STOPc}')
+		properties:append('${DOWNc}')
+		properties:append('${LOGc}')
 		text:clear()
 		text:append(properties:concat('\n'))
 	end
@@ -683,8 +693,20 @@ function updatedisplay()
 		info.type = stoptype
 		info.skill_ph = (get_rate(skill_ups) or 0) / 10
 		info.skill_total = (total_skill_ups or 0) / 10
+		info.GEOc = (color_GEO and 'Start GEO' or '\\cs(255,0,0)Start GEO\\cs(255,255,255)')
+		info.HELc = (color_HEL and 'Start Healing' or '\\cs(255,0,0)Start Healing\\cs(255,255,255)')
+		info.ENHc = (color_ENH and 'Start Enhancing' or '\\cs(255,0,0)Start Enhancing\\cs(255,255,255)')
+		info.NINc = (color_NIN and 'Start Ninjutsu' or '\\cs(255,0,0)Start Ninjutsu\\cs(255,255,255)')
+		info.SINc = (color_SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cs(255,255,255)')
+		info.BLUc = (color_BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cs(255,255,255)')
+		info.SMNc = (color_SMN and 'Start Summoning Magic' or '\\cs(255,0,0)Start Summoning Magic\\cs(255,255,255)')
+		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)\\cs(255,255,255)')
+		info.DOWNc = (color_DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cs(255,255,255)')
+		info.LOGc = (color_LOG and  'Logoff After Skillup' or '\\cs(255,0,0)Logoff After Skillup')
 		window:update(info)
 		window:show()
+		button:update(info)
+		button:show()
 end
 function file_write()
 	local file = io.open(lua_base_path..'data/'..player.name..'/Saves/skillup_data.lua',"w")
@@ -696,15 +718,6 @@ function file_write()
 end
 function mouse(type, x, y, delta, blocked)
 	local mx, my = button:extents()
-	if type == 0 then
-		if window:hover(x, y) and window:visible() then
-			button:pos((box.pos.x - mx), box.pos.y)
-		elseif button:hover(x, y) and button:visible() then
-			window:pos((boxa.pos.x + mx), boxa.pos.y)
-		else
-			return
-		end
-	elseif type == 2 then
 		local button_lines = button:text():count('\n') + 1
 		local hx = (x - boxa.pos.x)
 		local hy = (y - boxa.pos.y)
@@ -730,6 +743,147 @@ function mouse(type, x, y, delta, blocked)
 		location.DOWNyb = (location.STOPyb + location.offset)
 		location.LOGya = location.DOWNyb
 		location.LOGyb = (location.DOWNyb + location.offset)
+	if type == 0 then
+		if window:hover(x, y) and window:visible() then
+			button:pos((box.pos.x - mx), box.pos.y)
+		elseif button:hover(x, y) and button:visible() then
+			window:pos((boxa.pos.x + mx), boxa.pos.y)
+			if (hy > location.GEOya and hy < location.GEOyb) then
+				color_GEO = false
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.HELya and hy < location.HELyb) then
+				color_GEO = true
+				color_HEL = false
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.ENHya and hy < location.ENHyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = false
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.NINya and hy < location.NINyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = false
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.SINya and hy < location.SINyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = false
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.BLUya and hy < location.BLUyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = false
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.SMNya and hy < location.SMNyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = false
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.STOPya and hy < location.STOPyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = false
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.DOWNya and hy < location.DOWNyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = false
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.LOGya and hy < location.LOGyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = false
+				updatedisplay()
+			end
+		else
+			color_GEO = true
+			color_HEL = true
+			color_ENH = true
+			color_NIN = true
+			color_SIN = true
+			color_BLU = true
+			color_SMN = true
+			color_STOP = true
+			color_DOWN = true
+			color_LOG = true
+			updatedisplay()
+			return
+		end
+	elseif type == 2 then
 		if button:hover(x, y) and button:visible() then
 			if (hy > location.GEOya and hy < location.GEOyb) then
 				send_command("gs c startgeo")
