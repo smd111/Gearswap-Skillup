@@ -1,4 +1,4 @@
---version 1.0.5.0
+--version 1.0.5.2
 --[[How to use:
 	--this tool is set it and forget it you can leave it running for hours as long as se does not log you out it will keep running--
 	1.)place "skillup.lua" in your normal gearswap folder(where all your job files are)
@@ -531,6 +531,7 @@ function aftercast(spell)
 				else
 					send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
 				end
+				return
 			elseif spell.english == "Release" then
 				if spell.interrupted then
 					send_command('wait 0.5; input /ja "Release" <me>')
@@ -538,8 +539,10 @@ function aftercast(spell)
 				end
 			elseif spell.english == "Avatar's Favor" then
 				send_command('wait 1.0;input /ja "Release" <me>')
+				return
 			elseif spell.english == "Elemental Siphon" then
 				send_command('wait 1.0;input /ja "Release" <me>')
+				return
 			end
 			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
 		end
