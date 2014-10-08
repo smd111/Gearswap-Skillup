@@ -52,9 +52,9 @@ color_SMN = true
 color_STOP = true
 color_DOWN = true
 color_LOG = true
-if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
-	include('Saves/skillup_data.lua')
-end
+--if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
+	--include('Saves/skillup_data.lua')
+--end
 window = texts.new(box)
 button = texts.new(boxa)
 function get_sets()
