@@ -139,6 +139,7 @@ function get_sets()
 	shutdown = false
 	logoff = false
 	stoptype = "Stop"
+	first_spell = 'none'
 	frame_count = 0
 	initialize(window, box, 'window')
 	initialize(button, boxa, 'button')
@@ -316,6 +317,7 @@ function filtered_action(spell)
 		end
 		return
 	end
+	cancel_spell()
 end
 function precast(spell) -- done
 	if spell then
@@ -448,6 +450,7 @@ function precast(spell) -- done
 			return
 		end
 	end
+	cancel_spell()
 end
 function aftercast(spell)
 	if skilluprun then
@@ -522,12 +525,13 @@ function aftercast(spell)
 				send_command('wait 4.0;input /ja "Release" <me>')
 				return
 			end
-			if spell.english:contains('Spirit') and (spell.element == world.weather_element or spell.element == world.day_element)then
-				send_command('wait 4.0;input /ja "Elemental Siphon" <me>')
-			else
-				send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
-			end
-			if spell.english == "Release" then
+			if spell.type == "SummonerPact" then
+				if spell.english:contains('Spirit') and (spell.element == world.weather_element or spell.element == world.day_element)then
+					send_command('wait 4.0;input /ja "Elemental Siphon" <me>')
+				else
+					send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
+				end
+			elseif spell.english == "Release" then
 				if spell.interrupted then
 					send_command('wait 0.5; input /ja "Release" <me>')
 					return
