@@ -959,3 +959,6 @@ windower.raw_register_event('prerender',function()
     end
     frame_count = frame_count + 1
 end)
+if debugmode then
+	print('tell me code 167')
+end
