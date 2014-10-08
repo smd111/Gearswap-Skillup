@@ -405,8 +405,6 @@ function precast(spell) -- done
 				end
 			end
 		elseif skilluptype[skillupcount] == "Summoning" then
-					print(spell.name)
-					print(spell.english:contains('Spirit'))
 			if spell.type == "SummonerPact" then
 				if not windower.ffxi.get_spells()[spell.id] then
 					cancel_spell()
