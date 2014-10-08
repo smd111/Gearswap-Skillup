@@ -1,4 +1,4 @@
---version 1.0.5.2
+--version 1.0.5.0
 --[[How to use:
 	--this tool is set it and forget it you can leave it running for hours as long as se does not log you out it will keep running--
 	1.)place "skillup.lua" in your normal gearswap folder(where all your job files are)
@@ -18,7 +18,6 @@
 	
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
 -- Debug mode (default: false)
-debugmode = false
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -52,9 +51,9 @@ color_SMN = true
 color_STOP = true
 color_DOWN = true
 color_LOG = true
---if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
-	--include('Saves/skillup_data.lua')
---end
+if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
+	include('Saves/skillup_data.lua')
+end
 window = texts.new(box)
 button = texts.new(boxa)
 function get_sets()
@@ -406,6 +405,8 @@ function precast(spell) -- done
 				end
 			end
 		elseif skilluptype[skillupcount] == "Summoning" then
+					print(spell.name)
+					print(spell.english:contains('Spirit'))
 			if spell.type == "SummonerPact" then
 				if not windower.ffxi.get_spells()[spell.id] then
 					cancel_spell()
@@ -427,8 +428,7 @@ function precast(spell) -- done
 				send_command('input /ja "Release" <me>')
 				return
 				end
-			end
-			if spell.english == "Release" then
+			elseif spell.english == "Release" then
 				if not pet.isvalid then
 					cancel_spell()
 					send_command('input /heal on')
@@ -442,6 +442,7 @@ function precast(spell) -- done
 				end
 			end
 		end
+		return
 	elseif spell.english == "Release" then
 		local recast = windower.ffxi.get_ability_recasts()[spell.recast_id]
 		if (recast > 0) then
@@ -449,8 +450,8 @@ function precast(spell) -- done
 			send_command('wait '..tostring(recast+0.5)..';input /ja "Release" <me>')
 			return
 		end
+		return
 	end
-	cancel_spell()
 end
 function aftercast(spell)
 	if skilluprun then
@@ -528,8 +529,10 @@ function aftercast(spell)
 			if spell.type == "SummonerPact" then
 				if spell.english:contains('Spirit') and (spell.element == world.weather_element or spell.element == world.day_element)then
 					send_command('wait 4.0;input /ja "Elemental Siphon" <me>')
-				else
+				elseif not spell.english:contains('Spirit') then
 					send_command('wait 4.0;input /ja "Avatar\'s Favor" <me>')
+				else
+					send_command('wait 0.5; input /ja "Release" <me>')
 				end
 				return
 			elseif spell.english == "Release" then
@@ -694,7 +697,7 @@ function updatedisplay()
 		info.skill = {}
 		info.skill.Healing = (skill['Healing Magic Capped'] and "Capped" or skill['Healing Magic Level'])
 		info.skill.Enhancing = (skill['Enhancing Magic Capped'] and "Capped" or skill['Enhancing Magic Level'])
-		info.skill.Summoning = (skill['Summoning Magic Capped'] and "Capped" or skill['Summoning Magic Level'])
+		info.skill.Summoning = skill['Summoning Magic Level']
 		info.skill.Ninjutsu = (skill['Ninjutsu Capped'] and "Capped" or skill['Ninjutsu Level'])
 		info.skill.Blue = (skill['Blue Magic Capped'] and "Capped" or skill['Blue Magic Level'])
 		info.skillbulk = info.skill[info.mode]
@@ -959,6 +962,3 @@ windower.raw_register_event('prerender',function()
     end
     frame_count = frame_count + 1
 end)
-if debugmode then
-	print('tell me code 167')
-end
