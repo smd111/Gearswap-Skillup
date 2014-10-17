@@ -17,7 +17,8 @@
 	to just stop and stay logged on after skillup use command "gs c afterStop"(only needed if you use one of the above auto shutdown/logoff)
 	
 	much thanks to Arcon,Byrth,Mote,and anybody else i forgot for the help in making this]]
--- Debug mode (default: false)
+-- Save Window Location (default: false)
+save_window_location = false
 packets = require('packets')
 box = {}
 box.pos = {}
@@ -151,25 +152,25 @@ function initialize(text, settings, a)
 		properties:append('--Skill Up--')
 		properties:append('Mode :\n   ${mode|None}')
 		if skilluptype[skillupcount] == 'Singing' then
-			properties:append('\\cs(255,255,255)Current Singing Skill LVL:\n   ${skillssing|0}')
-			properties:append('\\cs(255,255,255)Current String Skill LVL:\n   ${skillstring|0}')
-			properties:append('\\cs(255,255,255)Current Wind Skill LVL:\n   ${skillwind|0}')
+			properties:append('\\crCurrent Singing Skill LVL:\n   ${skillssing|0}')
+			properties:append('\\crCurrent String Skill LVL:\n   ${skillstring|0}')
+			properties:append('\\crCurrent Wind Skill LVL:\n   ${skillwind|0}')
 		elseif skilluptype[skillupcount] == 'Geomancy' then
-			properties:append('\\cs(255,255,255)Current Geomancy Skill LVL:\n   ${skillgeo|0}')
-			properties:append('\\cs(255,255,255)Current Handbell Skill LVL:\n   ${skillbell|0}')
+			properties:append('\\crCurrent Geomancy Skill LVL:\n   ${skillgeo|0}')
+			properties:append('\\crCurrent Handbell Skill LVL:\n   ${skillbell|0}')
 		else
-			properties:append('\\cs(255,255,255)Current Skilling LVL:\n   ${skillbulk|0}')
+			properties:append('\\crCurrent Skilling LVL:\n   ${skillbulk|0}')
 		end
 		if shutdown then
-			properties:append('\\cs(255,255,255)Will Shutdown When Skillup Done')
+			properties:append('\\crWill Shutdown When Skillup Done')
 		elseif logoff then
-			properties:append('\\cs(255,255,255)Will Logoff When Skillup Done')
+			properties:append('\\crWill Logoff When Skillup Done')
 		else
-			properties:append('\\cs(255,255,255)Will Stop When Skillup Done')
+			properties:append('\\crWill Stop When Skillup Done')
 		end
-		properties:append('\\cs(255,255,255)Skillup ${start|\\cs(255,0,0)Stoped}')
-		properties:append("\\cs(255,255,255)Skillup's Per Hour \\cs(255,255,0)${skill_ph|0}")
-		properties:append("\\cs(255,255,255)Total Skillup's \\cs(255,255,0)${skill_total|0}")
+		properties:append('\\crSkillup ${start|\\cs(255,0,0)Stoped}')
+		properties:append("\\crSkillup's Per Hour \\cs(255,255,0)${skill_ph|0}")
+		properties:append("\\crTotal Skillup's \\cs(255,255,0)${skill_total|0}")
 		text:clear()
 		text:append(properties:concat('\n'))
 	end
@@ -190,7 +191,9 @@ function initialize(text, settings, a)
 	end
 end
 function file_unload()
-	--file_write()
+	if save_window_location then
+		file_write()
+	end
     window:destroy()
     button:destroy()
 end
@@ -702,15 +705,15 @@ function updatedisplay()
 		info.type = stoptype
 		info.skill_ph = (get_rate(skill_ups) or 0) / 10
 		info.skill_total = (total_skill_ups or 0) / 10
-		info.GEOc = (color_GEO and 'Start GEO' or '\\cs(255,0,0)Start GEO\\cs(255,255,255)')
-		info.HELc = (color_HEL and 'Start Healing' or '\\cs(255,0,0)Start Healing\\cs(255,255,255)')
-		info.ENHc = (color_ENH and 'Start Enhancing' or '\\cs(255,0,0)Start Enhancing\\cs(255,255,255)')
-		info.NINc = (color_NIN and 'Start Ninjutsu' or '\\cs(255,0,0)Start Ninjutsu\\cs(255,255,255)')
-		info.SINc = (color_SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cs(255,255,255)')
-		info.BLUc = (color_BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cs(255,255,255)')
-		info.SMNc = (color_SMN and 'Start Summoning Magic' or '\\cs(255,0,0)Start Summoning Magic\\cs(255,255,255)')
-		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)Stop Skillups\\cs(255,255,255)')
-		info.DOWNc = (color_DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cs(255,255,255)')
+		info.GEOc = (color_GEO and 'Start GEO' or '\\cs(255,0,0)Start GEO\\cr')
+		info.HELc = (color_HEL and 'Start Healing' or '\\cs(255,0,0)Start Healing\\cr')
+		info.ENHc = (color_ENH and 'Start Enhancing' or '\\cs(255,0,0)Start Enhancing\\cr')
+		info.NINc = (color_NIN and 'Start Ninjutsu' or '\\cs(255,0,0)Start Ninjutsu\\cr')
+		info.SINc = (color_SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cr')
+		info.BLUc = (color_BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cr')
+		info.SMNc = (color_SMN and 'Start Summoning Magic' or '\\cs(255,0,0)Start Summoning Magic\\cr')
+		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)Stop Skillups\\cr')
+		info.DOWNc = (color_DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cr')
 		info.LOGc = (color_LOG and  'Logoff After Skillup' or '\\cs(255,0,0)Logoff After Skillup')
 		window:update(info)
 		window:show()
@@ -718,10 +721,15 @@ function updatedisplay()
 		button:show()
 end
 function file_write()
+	if not windower.dir_exists(lua_base_path..'data/'..player.name..'/Saves') then
+		windower.create_dir(lua_base_path..'data/'..player.name..'/Saves')
+	end
 	local file = io.open(lua_base_path..'data/'..player.name..'/Saves/skillup_data.lua',"w")
 	file:write(
 		'box.pos.x = '..tostring(box.pos.x)..
 		'\nbox.pos.y = '..tostring(box.pos.y)..
+		'\nboxa.pos.x = '..tostring(box.pos.x)..
+		'\nboxa.pos.y = '..tostring(box.pos.y)..
 		'')
 	file:close() 
 end
