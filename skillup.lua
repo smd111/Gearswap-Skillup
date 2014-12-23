@@ -7,10 +7,12 @@
 	to start Geomancy magic skillup use command "gs c startgeo"
 	to start Healing magic skillup use command "gs c starthealing"
 	to start Enhancing magic skillup use command "gs c startenhancing"
+	to start Elemental magic skillup use command "gs c startelemental"
 	to start Ninjutsu magic skillup use command "gs c startninjutsu"
 	to start Singing magic skillup use command "gs c startsinging"
 	to start Blue magic skillup use command "gs c startblue"
 	to start Summoning magic skillup use command "gs c startsmn"
+	to start Summoning magic skillup use command "gs c startarchery"
 	to stop all skillups use command "gs c skillstop"
 	to auto shutdown after skillup use command "gs c aftershutdown"
 	to auto logoff after skillup use command "gs c afterlogoff"
@@ -45,10 +47,12 @@ last_nin = 'none'
 color_GEO = true
 color_HEL = true
 color_ENH = true
+color_ELE = true
 color_NIN = true
 color_SIN = true
 color_BLU = true
 color_SMN = true
+color_ARC = true
 color_STOP = true
 color_DOWN = true
 color_LOG = true
@@ -66,7 +70,7 @@ function get_sets()
 	sets.brd.string = {
 		range="Lamia Harp"--put your string instrument here
 	}
-	skilluptype = {"Healing","Geomancy","Enhancing","Ninjutsu","Singing","Blue","Summoning"}
+	skilluptype = {"Healing","Geomancy","Enhancing","Ninjutsu","Singing","Blue","Summoning","Elemental","Archery"}
 	skillupcount = 1
 	geospells = {"Indi-Acumen","Indi-AGI","Indi-Attunement","Indi-Barrier","Indi-CHR","Indi-DEX","Indi-Fade","Indi-Fend","Indi-Focus","Indi-Frailty","Indi-Fury","Indi-Gravity","Indi-Haste","Indi-INT","Indi-Languor","Indi-Malaise","Indi-MND","Indi-Paralysis","Indi-Poison","Indi-Precision","Indi-Refresh","Indi-Regen","Indi-Slip","Indi-Slow","Indi-STR","Indi-Torpor","Indi-Vex","Indi-VIT","Indi-Voidance","Indi-Wilt"}
 	geocount = 1
@@ -74,6 +78,8 @@ function get_sets()
 	healingcount = 1
 	enhancespells = {"Baraera","Baraero","Barblizzara","Barblizzard","Barfira","Barfire","Barstone","Barstonra","Barthunder","Barthundra","Barwater","Barwatera"}
 	enhancecount = 1
+	elementalspells = {"Fire","Blizzard","Aero","Stone","Thunder","Water"}
+	elementalcount = 1
 	ninspells = {"Gekka: Ichi","Kakka: Ichi","Migawari: Ichi","Monomi: Ichi","Myoshu: Ichi","Tonko: Ichi","Tonko: Ni","Utsusemi: Ichi","Utsusemi: Ni","Yain: Ichi","Yain: Ichi","Gekka: Ichi"}
 	nincount = 1
 	nincant = T{}
@@ -131,6 +137,7 @@ function get_sets()
 	blucount = 1
 	smnspells = {"Carbuncle","Cait Sith","Diabolos","Fenrir","Garuda","Ifrit","Leviathan","Ramuh","Shiva","Titan","Air Spirit","Dark Spirit","Earth Spirit","Fire Spirit","Ice Spirit","Light Spirit","Thunder Spirit","Water Spirit"}
 	smncount = 1
+	defaultAmmo = "Wooden Arrow"--put your ammo here
 	sets.Idle = {
 		main="Dark Staff",
 		left_ear="Relaxing Earring",
@@ -179,10 +186,12 @@ function initialize(text, settings, a)
 		properties:append('${GEOc}')
 		properties:append('${HELc}')
 		properties:append('${ENHc}')
+		properties:append('${ELEc}')
 		properties:append('${NINc}')
 		properties:append('${SINc}')
 		properties:append('${BLUc}')
 		properties:append('${SMNc}')
+		properties:append('${ARCc}')
 		properties:append('${STOPc}')
 		properties:append('${DOWNc}')
 		properties:append('${LOGc}')
@@ -201,7 +210,9 @@ function status_change(new,old)
 	if new=='Idle' then
 		equip(sets.Idle)
 		if skilluprun then
-			if skilluptype[skillupcount] == "Geomancy" then
+			if skilluptype[skillupcount] == "Elemental" then
+				send_command('wait 1.0;input /ma "'..elementalspells[elementalcount]..'" <t>')
+			elseif skilluptype[skillupcount] == "Geomancy" then
 				send_command('wait 1.0;input /ma "'..geospells[geocount]..'" <me>')
 			elseif skilluptype[skillupcount] == "Healing" then
 				send_command('wait 1.0;input /ma "'..healingspells[healingcount]..'" <me>')
@@ -215,13 +226,25 @@ function status_change(new,old)
 				send_command('wait 1.0;input /ma "'..bluspells[blucount]..'" <me>')
 			elseif skilluptype[skillupcount] == "Summoning" then
 				send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Archery" then
+				send_command('wait 1.0;input /ra <t>')
 			end
 		end
 	end
 end
 function filtered_action(spell)
 	if skilluprun then
-		if spell.type == "Geomancy" then
+		if spell.skill == "Elemental Magic" then
+			if skill['Elemental Magic Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
+			cancel_spell()
+			--elementalcount = (elementalcount % #elementalspells) + 1
+			send_command('input /ma "'..elementalspells[elementalcount]..'" <t>')
+			return
+		elseif spell.type == "Geomancy" then
 			if skill['Geomancy Capped'] and skill['Handbell Capped'] then
 				skilluprun = false
 				shutdown_logoff()
@@ -316,6 +339,15 @@ function filtered_action(spell)
 			cancel_spell()
 			send_command('input /ja "Release" <me>')
 			return
+		elseif spell.action_type == "Ranged Attack" then
+			if skill['Archery Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end		
+			cancel_spell()
+			send_command('input /ra <t>')
+			return
 		end
 		return
 	end
@@ -330,7 +362,16 @@ function precast(spell) -- done
 		end
 	end
 	if skilluprun then
-		if skilluptype[skillupcount] == "Healing" then
+		if skilluptype[skillupcount] == "Elemental" then
+			if not windower.ffxi.get_spells()[spell.id] then
+				cancel_spell()
+				elementalcount = (elementalcount % #elementalspells) + 1
+				send_command('input /ma "'..elementalspells[elementalcount]..'" <t>')
+				return
+			else
+				elementalcount = (elementalcount % #elementalspells) + 1
+			end
+		elseif skilluptype[skillupcount] == "Healing" then
 			if not windower.ffxi.get_spells()[spell.id] then
 				cancel_spell()
 				healingcount = (healingcount % #healingspells) + 1
@@ -441,6 +482,14 @@ function precast(spell) -- done
 					send_command('wait '..tostring(recast+0.5)..';input /ja "Release" <me>')
 					return
 				end
+			end		
+		elseif skilluptype[skillupcount] == "Archery" then		
+			if player.equipment.ammo ~= defaultAmmo then			 
+				cancel_spell()
+				add_to_chat(122,"--- Refilling ammo ---")
+				equip({ammo=defaultAmmo})
+				send_command('input /ra <t>')
+				return
 			end
 		end
 		return
@@ -457,7 +506,9 @@ end
 function aftercast(spell)
 	if skilluprun then
 		if spell.interrupted then
-			if skilluptype[skillupcount] == "Geomancy" then
+			if skilluptype[skillupcount] == "Elemental" then
+				send_command('wait 3.0;input /ma "'..elementalspells[elementalcount]..'" <t>')
+			elseif skilluptype[skillupcount] == "Geomancy" then
 				send_command('wait 3.0;input /ma "'..geospells[geocount]..'" <me>')
 			elseif skilluptype[skillupcount] == "Healing" then
 				send_command('wait 3.0;input /ma "'..healingspells[healingcount]..'" <me>')
@@ -471,10 +522,19 @@ function aftercast(spell)
 				send_command('wait 3.5;input /ja "Unbridled Learning" <me>')
 			elseif skilluptype[skillupcount] == "Summoning" then
 				send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+			elseif skilluptype[skillupcount] == "Archery" then
+				send_command('wait 1.0;input /ra <t>')
 			end
 			return
-		end
-		if skilluptype[skillupcount] == "Geomancy" then
+		end		
+		if skilluptype[skillupcount] == "Elemental" then
+			if skill['Elemental Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
+			send_command('wait 3.0;input /ma "'..elementalspells[elementalcount]..'" <t>')
+		elseif skilluptype[skillupcount] == "Geomancy" then
 			if skill['Geomancy Capped'] and skill['Handbell Capped'] then
 				skilluprun = false
 				shutdown_logoff()
@@ -549,6 +609,13 @@ function aftercast(spell)
 				return
 			end
 			send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+		elseif skilluptype[skillupcount] == "Archery" then
+			if skill['Archery Capped'] then
+				skilluprun = false
+				shutdown_logoff()
+				return
+			end
+			send_command('wait 1.3;input /ra <t>')
 		end
 		return
 	elseif spell.type == "SummonerPact" then
@@ -566,6 +633,12 @@ function aftercast(spell)
 	end
 end
 function self_command(command)
+	if command == "startelemental" then
+		skilluprun = true
+		skillupcount = 8
+		send_command('wait 1.0;input /ma "'..elementalspells[elementalcount]..'" <t>')
+		initialize(window, box, 'window')
+	end
 	if command == "startgeo" then
 		skilluprun = true
 		skillupcount = 2
@@ -606,6 +679,12 @@ function self_command(command)
 		skilluprun = true
 		skillupcount = 7
 		send_command('wait 1.0;input /ma "'..smnspells[smncount]..'" <me>')
+		initialize(window, box, 'window')
+	end
+	if command == "startarchery" then
+		skilluprun = true
+		skillupcount = 9
+		send_command('wait 1.0;input /ra <t>')
 		initialize(window, box, 'window')
 	end
 	if command == "skillstop" then
@@ -698,7 +777,9 @@ function updatedisplay()
 		info.skill = {}
 		info.skill.Healing = (skill['Healing Magic Capped'] and "Capped" or skill['Healing Magic Level'])
 		info.skill.Enhancing = (skill['Enhancing Magic Capped'] and "Capped" or skill['Enhancing Magic Level'])
+		info.skill.Elemental = (skill['Elemental Magic Capped'] and "Capped" or skill['Elemental Magic Level'])
 		info.skill.Summoning = skill['Summoning Magic Level']
+		info.skill.Archery = skill['Archery Level']
 		info.skill.Ninjutsu = (skill['Ninjutsu Capped'] and "Capped" or skill['Ninjutsu Level'])
 		info.skill.Blue = (skill['Blue Magic Capped'] and "Capped" or skill['Blue Magic Level'])
 		info.skillbulk = info.skill[info.mode]
@@ -708,10 +789,12 @@ function updatedisplay()
 		info.GEOc = (color_GEO and 'Start GEO' or '\\cs(255,0,0)Start GEO\\cr')
 		info.HELc = (color_HEL and 'Start Healing' or '\\cs(255,0,0)Start Healing\\cr')
 		info.ENHc = (color_ENH and 'Start Enhancing' or '\\cs(255,0,0)Start Enhancing\\cr')
+		info.ELEc = (color_ELE and 'Start Elemental' or '\\cs(255,0,0)Start Elemental\\cr')
 		info.NINc = (color_NIN and 'Start Ninjutsu' or '\\cs(255,0,0)Start Ninjutsu\\cr')
 		info.SINc = (color_SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cr')
 		info.BLUc = (color_BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cr')
 		info.SMNc = (color_SMN and 'Start Summoning Magic' or '\\cs(255,0,0)Start Summoning Magic\\cr')
+		info.ARCc = (color_ARC and 'Start Archery' or '\\cs(255,0,0)Start Archery\\cr')
 		info.STOPc = (color_STOP and 'Stop Skillups' or '\\cs(255,0,0)Stop Skillups\\cr')
 		info.DOWNc = (color_DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cr')
 		info.LOGc = (color_LOG and  'Logoff After Skillup' or '\\cs(255,0,0)Logoff After Skillup')
@@ -746,16 +829,20 @@ function mouse(type, x, y, delta, blocked)
 	location.HELyb = (location.GEOyb + location.offset)
 	location.ENHya = location.HELyb
 	location.ENHyb = (location.HELyb + location.offset)
-	location.NINya = location.ENHyb
-	location.NINyb = (location.ENHyb + location.offset)
+	location.ELEya = location.ENHyb
+	location.ELEyb = (location.ENHyb + location.offset)
+	location.NINya = location.ELEyb
+	location.NINyb = (location.ELEyb + location.offset)
 	location.SINya = location.NINyb
 	location.SINyb = (location.NINyb + location.offset)
 	location.BLUya = location.SINyb
 	location.BLUyb = (location.SINyb + location.offset)
 	location.SMNya = location.BLUyb
 	location.SMNyb = (location.BLUyb + location.offset)
-	location.STOPya = location.SMNyb
-	location.STOPyb = (location.SMNyb + location.offset)
+	location.ARCya = location.SMNyb
+	location.ARCyb = (location.SMNyb + location.offset)
+	location.STOPya = location.ARCyb
+	location.STOPyb = (location.ARCyb + location.offset)
 	location.DOWNya = location.STOPyb
 	location.DOWNyb = (location.STOPyb + location.offset)
 	location.LOGya = location.DOWNyb
@@ -765,14 +852,30 @@ function mouse(type, x, y, delta, blocked)
 			button:pos((box.pos.x - mx), box.pos.y)
 		elseif button:hover(x, y) and button:visible() then
 			window:pos((boxa.pos.x + mx), boxa.pos.y)
-			if (hy > location.GEOya and hy < location.GEOyb) then
-				color_GEO = false
+			if (hy > location.ELEya and hy < location.ELEyb) then
+				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = false
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.GEOya and hy < location.GEOyb) then
+				color_GEO = false
+				color_HEL = true
+				color_ENH = true
+				color_ELE = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -781,10 +884,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = false
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -793,10 +898,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = false
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -805,10 +912,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = false
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -817,10 +926,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = false
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -829,10 +940,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = false
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -841,10 +954,26 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = false
+				color_ARC = true
+				color_STOP = true
+				color_DOWN = true
+				color_LOG = true
+				updatedisplay()
+			elseif (hy > location.ARCya and hy < location.ARCyb) then
+				color_GEO = true
+				color_HEL = true
+				color_ENH = true
+				color_ELE = true
+				color_NIN = true
+				color_SIN = true
+				color_BLU = true
+				color_SMN = true
+				color_ARC = false
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = true
@@ -853,10 +982,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = false
 				color_DOWN = true
 				color_LOG = true
@@ -865,10 +996,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = false
 				color_LOG = true
@@ -877,10 +1010,12 @@ function mouse(type, x, y, delta, blocked)
 				color_GEO = true
 				color_HEL = true
 				color_ENH = true
+				color_ELE = true
 				color_NIN = true
 				color_SIN = true
 				color_BLU = true
 				color_SMN = true
+				color_ARC = true
 				color_STOP = true
 				color_DOWN = true
 				color_LOG = false
@@ -890,10 +1025,12 @@ function mouse(type, x, y, delta, blocked)
 			color_GEO = true
 			color_HEL = true
 			color_ENH = true
+			color_ELE = true
 			color_NIN = true
 			color_SIN = true
 			color_BLU = true
 			color_SMN = true
+			color_ARC = true
 			color_STOP = true
 			color_DOWN = true
 			color_LOG = true
@@ -902,7 +1039,9 @@ function mouse(type, x, y, delta, blocked)
 		end
 	elseif type == 2 then
 		if button:hover(x, y) and button:visible() then
-			if (hy > location.GEOya and hy < location.GEOyb) then
+			if (hy > location.ELEya and hy < location.ELEyb) then
+				send_command("gs c startelemental")
+			elseif (hy > location.GEOya and hy < location.GEOyb) then
 				send_command("gs c startgeo")
 			elseif (hy > location.HELya and hy < location.HELyb) then
 				send_command("gs c starthealing")
@@ -916,6 +1055,8 @@ function mouse(type, x, y, delta, blocked)
 				send_command("gs c startblue")
 			elseif (hy > location.SMNya and hy < location.SMNyb) then
 				send_command("gs c startsmn")
+			elseif (hy > location.ARCya and hy < location.ARCyb) then
+				send_command("gs c startarchery")
 			elseif (hy > location.STOPya and hy < location.STOPyb) then
 				send_command("gs c skillstop")
 			elseif (hy > location.DOWNya and hy < location.DOWNyb) then
