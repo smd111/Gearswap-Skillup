@@ -736,7 +736,7 @@ function set_color(name)
     end
 end
 function mouse(type, x, y, delta, blocked)
-    local mx, my = windower.text.get_extents(button._name)
+    local mx, my = texts.extents(button._name)
     local button_lines = button:text():count('\n') + 1 
     local hx = (x - boxa.pos.x)
     local hy = (y - boxa.pos.y)
