@@ -159,7 +159,7 @@ function precast(spell)
         end
         return
     elseif gs_skillup.use_item and spell.type ~= "Item" and not buffactive[251] then
-        for i,v in ipairs(user_settings.skill_up_item) do
+        for i,v in ipairs(gs_skill.skill_up_item) do
             if player.inventory[res.items[v][gearswap.language]] then
                 cancel_spell()
                 send_command('input /item "'..res.items[v][gearswap.language]..'" <me>')
