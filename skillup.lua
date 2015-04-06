@@ -530,7 +530,7 @@ windower.raw_register_event('mouse', function(type, x, y, delta, blocked)
         elseif button:hover(x, y) and button:visible() then
             window:pos((gs_skillup.boxa.pos.x + 145), gs_skillup.boxa.pos.y)
             for i, v in ipairs(location) do
-                local switch = {[1]="TRUST",[2]='REF',[3]='ITEM'[4]="GEO",[5]="HEL",[6]="ENH",[7]="NIN",[8]="SIN",[9]="BLU",[10]="SMN",[11]="STOP",[12]="DOWN",
+                local switch = {[1]="TRUST",[2]='REF',[3]='ITEM',[4]="GEO",[5]="HEL",[6]="ENH",[7]="NIN",[8]="SIN",[9]="BLU",[10]="SMN",[11]="STOP",[12]="DOWN",
                                 [13]="LOG",[14]="TEST"}
                 if hy > location[i].ya and hy < location[i].yb then
                     set_color(switch[i])
