@@ -149,6 +149,7 @@ function precast(spell)
             return
         end
     elseif spell and spell.mp_cost > player.mp then
+        
         cancel_spell()
         send_command('input /heal on')
         return
@@ -209,8 +210,8 @@ function aftercast(spell)
             return
         end
     elseif spell.type == "SummonerPact" then
-        local spell_element = (type(spell.element)=='number' and res.elements[spell.element][gearswap.language] or spell.element)
-        if spell.en:contains('Spirit') and (spell_element == world.weather_element or spell_element == world.day_element) then
+        local spell_element = (type(spell.element)=='number' and res.elements[spell.element] or spell.element)
+        if spell.en:contains('Spirit') and (spell_element.name == world.weather_element or spell_element.name == world.day_element) then
             send_command('wait 4.0;input /ja "'..res.job_abilities[232][gearswap.language]..'" <me>')
         elseif not spell.en:contains('Spirit') then
             send_command('wait 4.0;input /ja "'..res.job_abilities[250][gearswap.language]..'" <me>')
