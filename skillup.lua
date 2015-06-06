@@ -41,9 +41,9 @@ function get_sets()
         skillup_count=1,bluspellulid = {['Harden Shell']=737,['Pyric Bulwark']=741,['Carcharian Verve']=745},skill_up_item = T{5889,5890,5891,5892}}
     end_skillup = {shutdown = false,logoff = false,stoptype = "Stop"}
     gs_skillup = {color={GEO=true,HEL=true,ENH=true,NIN=true,SIN=true,BLU=true,SMN=true,STOP=true,DOWN=true,LOG=true,TRUST=true,TEST=true,REF=true,ITEM=true},
-                skill_ups={},total_skill_ups=0,skill={},use_trust=false,use_item=false,use_geo=false,test_mode=false,test_brd="Wind"}
-    gs_skillup.box={pos={x=211,y=402},text={font='Dotum',size=12},bg={alpha=255}}
-    gs_skillup.boxa={pos={x=gs_skillup.box.pos.x - 145,y=gs_skillup.box.pos.y},text={font='Dotum',size=9},bg={alpha=255}}
+                skill_ups={},total_skill_ups=0,skill={},use_trust=false,use_item=false,use_geo=false,test_mode=false,test_brd="Wind",skipped_spells=T{}}
+    gs_skillup.box={pos={x=211,y=402},text={font='Segoe UI Symbol',size=12,Fonts={'sans-serif'},},bg={alpha=255}}
+    gs_skillup.boxa={pos={x=gs_skillup.box.pos.x - 145,y=gs_skillup.box.pos.y},text={font='Segoe UI Symbol',size=9},bg={alpha=255}}
     if gearswap.pathsearch({'Saves/skillup_data.lua'}) then
         include('Saves/skillup_data.lua')
     end
@@ -142,24 +142,35 @@ function precast(spell)
             send_command('input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
             return
         end
-    elseif spell.en == "Elemental Siphon" then
+    end
+    if spell.en == "Elemental Siphon" then
         if (windower.ffxi.get_ability_recasts()[spell.recast_id] > 0) or player.mpp > 75 then
             cancel_spell()
             send_command('input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
             return
         end
-    elseif spell and spell.mp_cost > player.mp then
-        
+    end
+    if spell and spell.mp_cost > player.mp then
+        if gs_skillup.skipped_spells:contains(spell.name) then
+            gs_skillup.skipped_spells:clear()
+            cancel_spell()
+            send_command('input /heal on')
+            return
+        end
         cancel_spell()
-        send_command('input /heal on')
+        gs_skillup.skipped_spells:append(spell.name)
+        gs_skill.skillup_count = (gs_skill.skillup_count % #gs_skill.skillup_spells) + 1
+        send_command('input /ma "'..gs_skill.skillup_spells[gs_skill.skillup_count]..'" <me>')
         return
-    elseif gs_skillup.use_trust and party.count == 1 and spell_usable(res.spells[931]) then
+    end
+    if gs_skillup.use_trust and party.count == 1 and spell_usable(res.spells[931]) then
         if spell.en ~= "Moogle" then
             cancel_spell()
             send_command('input /ma "'..res.spells[931][gearswap.language]..'" <me>')
         end
         return
-    elseif gs_skillup.use_item and spell.type ~= "Item" and not buffactive[251] then
+    end
+    if gs_skillup.use_item and spell.type ~= "Item" and not buffactive[251] then
         for i,v in ipairs(gs_skill.skill_up_item) do
             if player.inventory[res.items[v][gearswap.language]] then
                 cancel_spell()
@@ -210,8 +221,8 @@ function aftercast(spell)
             return
         end
     elseif spell.type == "SummonerPact" then
-        local spell_element = (type(spell.element)=='number' and res.elements[spell.element] or spell.element)
-        if spell.en:contains('Spirit') and (spell_element.name == world.weather_element or spell_element.name == world.day_element) then
+        local spell_element = (type(spell.element)=='number' and res.elements[spell.element][gearswap.language] or spell.element)
+        if spell.en:contains('Spirit') and (spell_element == world.weather_element or spell_element == world.day_element) then
             send_command('wait 4.0;input /ja "'..res.job_abilities[232][gearswap.language]..'" <me>')
         elseif not spell.en:contains('Spirit') then
             send_command('wait 4.0;input /ja "'..res.job_abilities[250][gearswap.language]..'" <me>')
