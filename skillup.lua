@@ -127,6 +127,10 @@ function precast(spell)
         else
             return
         end
+    elseif not pet.isvalid and S{"Release","Avatar's Favor","Elemental Siphon"}:contains(spell.en) then
+        cancel_spell()
+        send_command('input /heal on')
+        return
     end
     if check_skill_cap() or not skilluprun then cancel_spell() shutdown_logoff() return end
     if gs_skill.skillup_type == "Singing" then
