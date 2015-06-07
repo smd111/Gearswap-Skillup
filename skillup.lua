@@ -214,7 +214,7 @@ function aftercast(spell)
         shutdown_logoff() return 
     elseif spell.interrupted then
         if spell.en == "Release" then
-            send_command('wait 0.5; input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
+            send_command('wait 0.5;input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
             return
         else
             send_command('wait 3.0;input /ma "'..spell.name..'" <me>')
@@ -227,7 +227,7 @@ function aftercast(spell)
         elseif not spell.en:contains('Spirit') then
             send_command('wait 4.0;input /ja "'..res.job_abilities[250][gearswap.language]..'" <me>')
         else
-            send_command('wait 3.0; input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
+            send_command('wait 3.0;input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
         end
     elseif spell.en == "Avatar's Favor" then
         send_command('wait 1.0;input /ja "'..res.job_abilities[90][gearswap.language]..'" <me>')
