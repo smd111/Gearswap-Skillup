@@ -1,4 +1,5 @@
 packets = require('packets')
+res = require 'resources'
 --version 2.0.0.0 final
 ----------USER IN CODE SETTINGS----------
 ---Put the spells you want to use in these tables
