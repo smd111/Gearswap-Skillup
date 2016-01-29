@@ -335,7 +335,7 @@ function check_skill_cap()
 end
 function spell_valid(tab)
     if (tab.levels[player.main_job_id] and tab.levels[player.main_job_id] <= player.main_job_level or tab.levels[player.sub_job_id] and tab.levels[player.sub_job_id] <= player.main_job_level) and tab.targets:contains('Self') and
-       tab.targets:contains('Self') and not tab.en:wmatch('Teleport-*|Warp*|Tractor*|Retrace|Escape|Geo-*|Sacrifice') then
+       tab.targets:contains('Self') and not tab.en:wmatch('Teleport-*|Warp*|Tractor*|Retrace|Escape|Geo-*|Sacrifice|Odin|Alexander') then
         return true
     end
 end
