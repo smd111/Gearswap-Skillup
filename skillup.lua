@@ -4,7 +4,8 @@ res = require 'resources'
 ----------USER IN CODE SETTINGS----------
 ---Put the spells you want to use in these tables
 ---Example: for healing Healing = T{'Cure','Cure II'},
----if you cant use the spell it will not use it
+---If you cant use the spell it will not use it
+---You need to have a minimum of 2 spells in your list
 user_settings = {
     user_spells = {
         Healing = T{},
@@ -172,8 +173,8 @@ function precast(spell)
         if spell.en ~= "Moogle" then
             cancel_spell()
             send_command('input /ma "'..res.spells[931][gearswap.language]..'" <me>')
+            return
         end
-        return
     end
     if gs_skillup.use_item and spell.type ~= "Item" and not buffactive[251] then
         for i,v in ipairs(gs_skill.skill_up_item) do
@@ -183,18 +184,21 @@ function precast(spell)
                 return
             end
         end
-    elseif gs_skillup.use_geo and player.main_job == "GEO" and spell_usable(res.spells[800]) and not pet.isvalid then
-        if spell.en ~= "Geo-Refresh" then
-            cancel_spell()
-            send_command('input /ma "'..res.spells[800][gearswap.language]..'" <me>')
+    elseif gs_skillup.use_geo then
+        if player.main_job == "GEO" and spell_usable(res.spells[800]) and not pet.isvalid then
+            if spell.en ~= "Geo-Refresh" then
+                cancel_spell()
+                send_command('input /ma "'..res.spells[800][gearswap.language]..'" <me>')
+                return
+            end
+            return
+        elseif player.sub_job == "GEO" and spell_usable(res.spells[770]) and buffactive[541] ~= (gs_skillup.use_trust and 2 or 1) then
+            if spell.en ~= "Indi-Refresh" then
+                cancel_spell()
+                send_command('input /ma "'..res.spells[770][gearswap.language]..'" <me>')
+                return
+            end
         end
-        return
-    elseif gs_skillup.use_geo and player.sub_job == "GEO" and spell_usable(res.spells[770]) and buffactive[541] ~= (gs_skillup.use_trust and 2 or 1) then
-        if spell.en ~= "Indi-Refresh" then
-            cancel_spell()
-            send_command('input /ma "'..res.spells[770][gearswap.language]..'" <me>')
-        end
-        return
     end
     if spell.name == gs_skill.skillup_spells[gs_skill.skillup_count] then
         if not spell_usable(spell) then
@@ -335,7 +339,7 @@ function check_skill_cap()
 end
 function spell_valid(tab)
     if (tab.levels[player.main_job_id] and tab.levels[player.main_job_id] <= player.main_job_level or tab.levels[player.sub_job_id] and tab.levels[player.sub_job_id] <= player.main_job_level) and tab.targets:contains('Self') and
-       tab.targets:contains('Self') and not tab.en:wmatch('Teleport-*|Warp*|Tractor*|Retrace|Escape|Geo-*|Sacrifice|Odin|Alexander') then
+        not tab.en:wmatch('Teleport-*|Warp*|Tractor*|Retrace|Escape|Geo-*|Sacrifice|Odin|Alexander|Recall-*') then
         return true
     end
 end
@@ -418,13 +422,13 @@ function initialize(text, settings, a)
         properties:append('${TRUSTc}')
         properties:append('${REFc}')
         properties:append('${ITEMc}')
-        properties:append('${GEOc}')
         properties:append('${HELc}')
         properties:append('${ENHc}')
         properties:append('${NINc}')
         properties:append('${SINc}')
         properties:append('${BLUc}')
         properties:append('${SMNc}')
+        properties:append('${GEOc}')
         properties:append('${STOPc}')
         properties:append('${DOWNc}')
         properties:append('${LOGc}')
@@ -547,7 +551,7 @@ windower.raw_register_event('mouse', function(type, x, y, delta, blocked)
         elseif button:hover(x, y) and button:visible() then
             window:pos((gs_skillup.boxa.pos.x + 145), gs_skillup.boxa.pos.y)
             for i, v in ipairs(location) do
-                local switch = {[1]="TRUST",[2]='REF',[3]='ITEM',[4]="GEO",[5]="HEL",[6]="ENH",[7]="NIN",[8]="SIN",[9]="BLU",[10]="SMN",[11]="STOP",[12]="DOWN",
+                local switch = {[1]="TRUST",[2]='REF',[3]='ITEM',[4]="HEL",[5]="ENH",[6]="NIN",[7]="SIN",[8]="BLU",[9]="SMN",[10]="GEO",[11]="STOP",[12]="DOWN",
                                 [13]="LOG",[14]="TEST"}
                 if hy > location[i].ya and hy < location[i].yb then
                     set_color(switch[i])
@@ -561,9 +565,9 @@ windower.raw_register_event('mouse', function(type, x, y, delta, blocked)
     elseif type == 2 then
         if button:hover(x, y) and button:visible() then
             for i, v in ipairs(location) do
-                local switchb = {[1]="settrust",[2]="setgeo",[3]="setitem",[4]="start Geomancy",[5]="start Healing",[6]="start Enhancing",[7]="start Ninjutsu",
-                                [8]="start Singing",[9]="start Blue",[10]="start Summoning",[11]="skillstop",[12]="aftershutdown",[13]="afterlogoff",
-                                [14]="changeinstrament"}
+                local switchb = {[1]="settrust",[2]="setgeo",[3]="setitem",[4]="start Healing",[5]="start Enhancing",[6]="start Ninjutsu",
+                                [7]="start Singing",[8]="start Blue",[9]="start Summoning",[10]="start Geomancy",[11]="skillstop",[12]="aftershutdown",
+                                [13]="afterlogoff",[14]="changeinstrament"}
                 if hy > location[i].ya and hy < location[i].yb then
                     send_command("gs c "..switchb[i])
                     updatedisplay()
