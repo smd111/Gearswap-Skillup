@@ -29,7 +29,7 @@ Total Skillup's
 A menu so you dont have to send commands to windower(the commands will continue to work)
 
 
-To download click the "Download Zip" to the right
+To download click the "Clone or download" to the upper right the select "Download Zip"
 
 Then extract and copy skillup.lua to your gearswap/data/(playername) folder
 
