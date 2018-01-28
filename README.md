@@ -2,7 +2,7 @@ Gearswap-Skillup
 ================
 ver: 1/28/2018.1
 
-Added the Divine category to the script, still meant for out of combat spells only.  Really only useful for Paladins who have the "Enlight" spell.
+Added the Divine category to the script, still meant for out of combat spells only.  Really only useful for Paladins who have the "Enlight" spell.  Same rules apply, to start Divine skillup use:  gs c start divine
 
 -Kanaarei
 
