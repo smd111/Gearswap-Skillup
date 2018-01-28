@@ -10,11 +10,12 @@ user_settings = {
     user_spells = {
         Healing = T{},
         Geomancy = T{},
-        Enhancing = T{},
+        Enhancing = T{'Protect','Shell','Enlight'},
         Ninjutsu = T{},
         Singing = T{},
         Blue = T{},
-        Summoning = T{}},
+        Summoning = T{},
+		Divine = T{}},
     save_settings = false} --change this to true if you wish to save the last position of your skillup window
 sets.brd = {
     wind_inst = {
@@ -39,7 +40,7 @@ sets.Resting = {
 --DO NOT CHANGE ANY THING BELOW THIS LINE--
 function get_sets()
     skilluprun = false
-    gs_skill = {skillup_table = {"Healing","Geomancy","Enhancing","Ninjutsu","Singing","Blue","Summoning"},skillup_type = 'None',skillup_spells = T{},
+    gs_skill = {skillup_table = {"Healing","Geomancy","Enhancing","Ninjutsu","Singing","Blue","Summoning","Divine"},skillup_type = 'None',skillup_spells = T{},
         skillup_count=1,bluspellulid = {['Harden Shell']=737,['Pyric Bulwark']=741,['Carcharian Verve']=745},skill_up_item = T{5889,5890,5891,5892}}
     end_skillup = {shutdown = false,logoff = false,stoptype = "Stop"}
     gs_skillup = {color={GEO=true,HEL=true,ENH=true,NIN=true,SIN=true,BLU=true,SMN=true,STOP=true,DOWN=true,LOG=true,TRUST=true,TEST=true,REF=true,ITEM=true},
@@ -259,7 +260,7 @@ function self_command(command)
                 if #gs_skill.skillup_spells > 0 then
                     gs_skill.skillup_spells:clear()
                 end
-                local skill_id = {["Healing"]=33,["Enhancing"]=34,["Summoning"]=38,["Ninjutsu"]=39,["Singing"]=40,["Blue"]=43,["Geomancy"]=44}
+                local skill_id = {["Healing"]=33,["Enhancing"]=34,["Summoning"]=38,["Ninjutsu"]=39,["Singing"]=40,["Blue"]=43,["Geomancy"]=44,["Divine"]=32}
                 local spells_have = windower.ffxi.get_spells()
                 for i,v in pairs(res.spells) do
                     if v.skill == skill_id[gs_skill.skillup_type] and spell_valid(v) and spells_have[v.id] then
@@ -313,7 +314,7 @@ function spell_usable(spell)
     end
 end
 function check_skill_cap()
-    if S{'Healing','Enhancing','Blue','Summoning'}:contains(gs_skill.skillup_type) then
+    if S{'Healing','Enhancing','Blue','Summoning','Divine'}:contains(gs_skill.skillup_type) then
         if gs_skillup.skill[gs_skill.skillup_type..' Magic Capped'] and not gs_skillup.test_mode then
             skilluprun = false
             return true
@@ -455,6 +456,7 @@ function updatedisplay()
         info.skill.Summoning = gs_skillup.skill['Summoning Magic Capped'] and "Capped" or gs_skillup.skill['Summoning Magic Level']
         info.skill.Ninjutsu = (gs_skillup.skill['Ninjutsu Capped'] and "Capped" or gs_skillup.skill['Ninjutsu Level'])
         info.skill.Blue = (gs_skillup.skill['Blue Magic Capped'] and "Capped" or gs_skillup.skill['Blue Magic Level'])
+		info.skill.Divine = (gs_skillup.skill['Divine Magic Capped'] and "Capped" or gs_skillup.skill['Divine Magic Level'])
         info.skillbulk = info.skill[info.mode]
         info.type = end_skillup.stoptype
         info.skill_ph = (get_rate(gs_skillup.skill_ups) or 0) / 10
@@ -465,6 +467,7 @@ function updatedisplay()
         info.NINc = (gs_skillup.color.NIN and 'Start Ninjutsu' or '\\cs(255,0,0)Start Ninjutsu\\cr')
         info.SINc = (gs_skillup.color.SIN and 'Start Singing' or '\\cs(255,0,0)Start Singing\\cr')
         info.BLUc = (gs_skillup.color.BLU and 'Start Blue Magic' or '\\cs(255,0,0)Start Blue Magic\\cr')
+		info.DIVc = (gs_skillup.color.DIV and 'Start Divine Magic' or '\\cs(255,0,0)Start Divine Magic\\cr')
         info.SMNc = (gs_skillup.color.SMN and 'Start Summoning Magic  ' or '\\cs(255,0,0)Start Summoning Magic\\cr  ')
         info.STOPc = (gs_skillup.color.STOP and 'Stop Skillups' or '\\cs(255,0,0)Stop Skillups\\cr')
         info.DOWNc = (gs_skillup.color.DOWN and 'Shutdown After Skillup' or '\\cs(255,0,0)Shutdown After Skillup\\cr')
@@ -566,8 +569,8 @@ windower.raw_register_event('mouse', function(type, x, y, delta, blocked)
         if button:hover(x, y) and button:visible() then
             for i, v in ipairs(location) do
                 local switchb = {[1]="settrust",[2]="setgeo",[3]="setitem",[4]="start Healing",[5]="start Enhancing",[6]="start Ninjutsu",
-                                [7]="start Singing",[8]="start Blue",[9]="start Summoning",[10]="start Geomancy",[11]="skillstop",[12]="aftershutdown",
-                                [13]="afterlogoff",[14]="changeinstrament"}
+                                [7]="start Singing",[8]="start Blue",[9]="start Divine",[10]="start Summoning",[11]="start Geomancy",[12]="skillstop",[13]="aftershutdown",
+                                [14]="afterlogoff",[15]="changeinstrament"}
                 if hy > location[i].ya and hy < location[i].yb then
                     send_command("gs c "..switchb[i])
                     updatedisplay()

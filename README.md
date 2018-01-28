@@ -1,5 +1,13 @@
 Gearswap-Skillup
 ================
+ver: 1/28/2018.1
+
+Added the Divine category to the script, still meant for out of combat spells only.  Really only useful for Paladins who have the "Enlight" spell.  Same rules apply, to start Divine skillup use:  gs c start divine
+
+-Kanaarei
+
+---------------------------------------------------------------------------------------------------------
+
 ver: 6/6/2015.2
 
 THIS TOOL IS ONLY DESIGNED TO SKILLUP THOES MAGIC SKILLS THAT CAN BE SKILLED OUTSIDE OF BATTLE IF YOU WANT TO USE IT FOR OTHER MAGIC SKILLS !!YOUR ON YOUR OWN TO FIND ANY ISSUES I WILL NOT HELP!!
