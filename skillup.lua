@@ -156,7 +156,7 @@ function precast(spell)
             return
         end
     end
-    if spell and spell.mp_cost > player.mp then
+    if spell and (spell.mp_cost + 25) > player.mp  then
         if gs_skillup.skipped_spells:contains(spell.name) then
             gs_skillup.skipped_spells:clear()
             cancel_spell()
@@ -344,7 +344,7 @@ function spell_valid(tab)
     end
 end
 function shutdown_logoff()
-    add_to_chat(123,"Stoping skillup")
+    add_to_chat(123,"Stopping skillup")
     if end_skillup.logoff then
         send_command('wait 3.0;input /logout')
     elseif end_skillup.shutdown then
@@ -411,9 +411,9 @@ function initialize(text, settings, a)
         else
             properties:append('\\crWill Stop When Skillup Done')
         end
-        properties:append('\\crSkillup ${start|\\cs(255,0,0)Stoped}')
-        properties:append("\\crSkillup's Per Hour \\cs(255,255,0)${skill_ph|0}")
-        properties:append("\\crTotal Skillup's \\cs(255,255,0)${skill_total|0}")
+        properties:append('\\crSkillup ${start|\\cs(255,0,0)Stopped}')
+        properties:append("\\crSkillups Per Hour \\cs(255,255,0)${skill_ph|0}")
+        properties:append("\\crTotal Skillups \\cs(255,255,0)${skill_total|0}")
         text:clear()
         text:append(properties:concat('\n'))
     end
@@ -443,7 +443,7 @@ function updatedisplay()
     local info = {}
         info.mode = gs_skill.skillup_type
         info.modeb = skilluprun and info.mode or 'None'
-        info.start = (skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)Stoped')
+        info.start = (skilluprun and '\\cs(0,255,0)Started' or '\\cs(255,0,0)Stopped')
         info.skillssing = (gs_skillup.skill['Singing Capped'] and "Capped" or gs_skillup.skill['Singing Level'])
         info.skillstring = (gs_skillup.skill['Stringed Instrument Capped'] and "Capped" or gs_skillup.skill['Stringed Instrument Level'])
         info.skillwind = (gs_skillup.skill['Wind Instrument Capped'] and "Capped" or gs_skillup.skill['Wind Instrument Level'])
